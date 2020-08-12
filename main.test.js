@@ -8,14 +8,14 @@ class AssertionError extends Error {
 class TestCase {
     assertEqual(a, b) {
         if (a !== b) {
-            throw new AssertionError('1 !== 2')
+            throw new AssertionError(a + ' !== ' + b)
         }
     }
 
     assertRaises(errType, throwFunc) {
         try {
-            if (!(typeof throwFunc !== 'function')) {
-                throw new TypeError('Shit is fucked')
+            if (!(typeof throwFunc !== 'Function')) {
+                throw new TypeError('throwFunc must be callable')
             }
             throwFunc()
         } catch (error) {
@@ -40,17 +40,13 @@ class AssertEqualTests extends TestCase {
     }
 }
 
-try {
-    const tests = new AssertEqualTests()
-    tests.testErrorRaisingNiladic()
-    tests.testNumberEquality()
-} catch (error) {
-    assert(error.message, '1 !== 2')
-}
+const tests = new AssertEqualTests()
+tests.testErrorRaisingNiladic()
+tests.testNumberEquality()
 console.log('all tests pass')
 
-function assert(a, b, msg = null) {
-    if (a !== b) {
-        throw new AssertionError(`${a} !== ${b}`, msg ? msg : '')
-    }
-}
+// function assert(a, b, msg = null) {
+//     if (a !== b) {
+//         throw new AssertionError(`${a} !== ${b}`, msg ? msg : '')
+//     }
+// }
