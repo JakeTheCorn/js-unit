@@ -17,20 +17,27 @@ class TestCase {
         const failures = []
         let successCount = 0
         const funcNames = this.__getFuncNames().filter(f => /^test*/.test(f))
-        for (let funcName of funcNames) {
+        for (let test of funcNames) {
             try {
-                this[funcName]()
+                this[test]()
                 successCount++
             } catch (error) {
-                failures.push(error.stack)
+                failures.push({ test, error })
                 failureCount++
             }
             testsRunCount++
         }
-        console.log(`${testsRunCount} Tests Run`)
-        console.log(`${successCount} Tests Passed`)
-        console.log(`${failureCount} Tests Failed\n`)
-        console.log(failures.join('\n'))
+        const counts = {
+            run: testsRunCount,
+            success: successCount,
+            failed: failureCount,
+        }
+
+        return {
+            name: this.constructor.name,
+            counts,
+            failures,
+        }
     }
 
     __getFuncNames() {
@@ -80,9 +87,41 @@ class unittest {
     }
 
     static main() {
+        let successCount = 0
+        let failCount = 0
+        let totalRun = 0
+        const classFailures = []
         for (const testCase of unittest.cases) {
-            testCase.run()
+            const report = testCase.run()
+            totalRun += report.counts.run
+            successCount += report.counts.success
+            failCount += report.counts.failed
+            if (report.counts.failed) {
+                classFailures.push({
+                    className: report.name,
+                    failures: report.failures,
+                })
+            }
         }
+        if (failCount === 0) {
+            console.log(totalRun + ' tests run')
+            console.log(successCount + ' tests pass')
+            console.log(failCount + ' tests fail')
+            return
+        }
+        const lines = []
+        for (const classFailure of classFailures) {
+            for (const failure of classFailure.failures) {
+                let line = classFailure.className + '.' + failure.test
+                lines.push([line, failure.error])
+            }
+        }
+        for (const line of lines) {
+            console.log(line[0])
+            console.log(line[1])
+            console.log('\n')
+        }
+
     }
 }
 
@@ -129,7 +168,7 @@ class AssertEqualTests extends unittest.TestCase {
 
 class OtherTests extends unittest.TestCase {
     testOtherStuff() {
-        this.assertEqual(1, 3)
+        this.assertEqual(1, 1)
     }
 }
 
