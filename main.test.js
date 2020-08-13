@@ -5,25 +5,23 @@ class AssertionError extends Error {
     }
 }
 
-// this is an untested function
-function getAllFuncs(toCheck) {
-    var props = [];
-    var obj = toCheck;
-    do {
-        props = props.concat(Object.getOwnPropertyNames(obj));
-    } while (obj = Object.getPrototypeOf(obj));
+// todo:
+//   Error Reporting
+//     Display results in comparison.
+//     Make assert functions return values instead of throwing
+//       this will be useful for reporting
+//       this runner of this can still throw.
+//   Parallel running?
+//   calling unittest.main() instead of testCaseInstance.run()
 
-    return props.sort().filter(function(e, i, arr) {
-       if (e!=arr[i+1] && typeof toCheck[e] == 'function') return true;
-    });
-}
 
 class TestCase {
     run() {
         const results = {}
-        let successCount = 0
+        let testsRunCount = 0
         let failureCount = 0
-        const funcNames = getAllFuncs(this).filter(f => /^test*/.test(f))
+        let successCount = 0
+        const funcNames = this.__getFuncNames().filter(f => /^test*/.test(f))
         for (let funcName of funcNames) {
             try {
                 this[funcName]()
@@ -33,10 +31,25 @@ class TestCase {
                 results[funcName] = false
                 failureCount++
             }
+            testsRunCount++
         }
-        if (failureCount) {
-            console.log('FAIL', results)
-        }
+        console.log(`${testsRunCount} Tests Run`)
+        console.log(`${successCount} Tests Passed`)
+        console.log(`${failureCount} Tests Failed`)
+    }
+
+    __getFuncNames() {
+        var self = this
+        var props = [];
+        var obj = self;
+        do {
+            props = props.concat(Object.getOwnPropertyNames(obj));
+        } while (obj = Object.getPrototypeOf(obj));
+
+        return props.sort().filter(function(e, i, arr) {
+            if (e!=arr[i+1] && typeof self[e] == 'function') return true;
+        });
+
     }
 
     assertEqual(a, b) {
@@ -93,8 +106,25 @@ class AssertEqualTests extends TestCase {
     testNumberInEqualityRaises() {
         this.assertEqual(1, 2)
     }
+
+    testOnePlusOne() {
+        this.assertEqual(1 + 1, 2)
+    }
 }
 
-const tests = new AssertEqualTests()
 
-tests.run()
+new AssertEqualTests().run()
+
+
+// this is an untested function
+function getAllFuncs(toCheck) {
+    var props = [];
+    var obj = toCheck;
+    do {
+        props = props.concat(Object.getOwnPropertyNames(obj));
+    } while (obj = Object.getPrototypeOf(obj));
+
+    return props.sort().filter(function(e, i, arr) {
+       if (e!=arr[i+1] && typeof toCheck[e] == 'function') return true;
+    });
+}
