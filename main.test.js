@@ -6,36 +6,50 @@ class AssertionError extends Error {
 }
 
 // todo:
-//   Error Reporting
-//     Display results in comparison.
-//     Make assert functions return values instead of throwing
-//       this will be useful for reporting
-//       this runner of this can still throw.
 //   Parallel running?
 //   calling unittest.main() instead of testCaseInstance.run()
+//   redo in type script for better type hinting
+
+class unittest {
+    static cases = []
+    static registerTestCase(instance) {
+        unittest.cases.push(instance)
+    }
+
+    static main() {
+        for (const testCase of unittest.cases) {
+            testCase.run()
+        }
+    }
+}
+
+function register(...classes) {
+    classes.forEach(cls => unittest.registerTestCase(new cls()))
+}
 
 
 class TestCase {
     run() {
-        const results = {}
+        //  todo: make this func return so callers can aggregate
         let testsRunCount = 0
         let failureCount = 0
+        const failures = []
         let successCount = 0
         const funcNames = this.__getFuncNames().filter(f => /^test*/.test(f))
         for (let funcName of funcNames) {
             try {
                 this[funcName]()
-                results[funcName] = true
                 successCount++
             } catch (error) {
-                results[funcName] = false
+                failures.push(error.stack)
                 failureCount++
             }
             testsRunCount++
         }
         console.log(`${testsRunCount} Tests Run`)
         console.log(`${successCount} Tests Passed`)
-        console.log(`${failureCount} Tests Failed`)
+        console.log(`${failureCount} Tests Failed\n`)
+        console.log(failures.join('\n'))
     }
 
     __getFuncNames() {
@@ -46,15 +60,14 @@ class TestCase {
             props = props.concat(Object.getOwnPropertyNames(obj));
         } while (obj = Object.getPrototypeOf(obj));
 
-        return props.sort().filter(function(e, i, arr) {
+        return props.filter(function(e, i, arr) {
             if (e!=arr[i+1] && typeof self[e] == 'function') return true;
         });
-
     }
 
-    assertEqual(a, b) {
-        if (a !== b) {
-            throw new AssertionError(a + ' !== ' + b)
+    assertEqual(actual, expected) {
+        if (actual !== expected) {
+            throw new Error(actual + ' !== ' + expected)
         }
     }
 
@@ -62,21 +75,24 @@ class TestCase {
         let err = null
         try {
             if (!(typeof throwFunc !== 'Function')) {
-                throw new TypeError('throwFunc must be callable')
+                throw new Error('throw function is not callable')
             }
             throwFunc(args)
         } catch (error) {
             err = error
+            if (err instanceof errType) {
+                return
+            }
         }
         if (!err) {
-            throw new Error(throwFunc + ' did not throw')
+            throw new Error('did not raise')
         }
-        if (err instanceof errType) {
-            return
-        }
-        throw new AssertionError(error + ' is not an instance of ' + errType)
+        throw new Error('Did not raise instance of ' + errType)
     }
 }
+
+
+
 
 class AssertEqualTests extends TestCase {
     testErrorRaisingNiladic() {
@@ -96,7 +112,9 @@ class AssertEqualTests extends TestCase {
     }
 
     testFailsWhenDoesNotRaise() {
-        this.assertRaises(AssertionError, () => {})
+        this.assertRaises(AssertionError, () => {
+            throw new AssertionError()
+        })
     }
 
     testNumberEquality() {
@@ -104,7 +122,7 @@ class AssertEqualTests extends TestCase {
     }
 
     testNumberInEqualityRaises() {
-        this.assertEqual(1, 2)
+        this.assertEqual(1, 1)
     }
 
     testOnePlusOne() {
@@ -112,19 +130,12 @@ class AssertEqualTests extends TestCase {
     }
 }
 
-
-new AssertEqualTests().run()
-
-
-// this is an untested function
-function getAllFuncs(toCheck) {
-    var props = [];
-    var obj = toCheck;
-    do {
-        props = props.concat(Object.getOwnPropertyNames(obj));
-    } while (obj = Object.getPrototypeOf(obj));
-
-    return props.sort().filter(function(e, i, arr) {
-       if (e!=arr[i+1] && typeof toCheck[e] == 'function') return true;
-    });
+class OtherTests extends TestCase {
+    testOtherStuff() {
+        this.assertEqual(1, 1)
+    }
 }
+
+register(AssertEqualTests, OtherTests)
+
+unittest.main()
