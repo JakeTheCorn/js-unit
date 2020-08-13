@@ -9,25 +9,6 @@ class AssertionError extends Error {
 //   Parallel running?
 //   calling unittest.main() instead of testCaseInstance.run()
 //   redo in type script for better type hinting
-
-class unittest {
-    static cases = []
-    static registerTestCase(instance) {
-        unittest.cases.push(instance)
-    }
-
-    static main() {
-        for (const testCase of unittest.cases) {
-            testCase.run()
-        }
-    }
-}
-
-function register(...classes) {
-    classes.forEach(cls => unittest.registerTestCase(new cls()))
-}
-
-
 class TestCase {
     run() {
         //  todo: make this func return so callers can aggregate
@@ -91,10 +72,26 @@ class TestCase {
     }
 }
 
+class unittest {
+    static TestCase = TestCase
+    static cases = []
+    static registerTestCase(instance) {
+        unittest.cases.push(instance)
+    }
+
+    static main() {
+        for (const testCase of unittest.cases) {
+            testCase.run()
+        }
+    }
+}
+
+function register(...classes) {
+    classes.forEach(cls => unittest.registerTestCase(new cls()))
+}
 
 
-
-class AssertEqualTests extends TestCase {
+class AssertEqualTests extends unittest.TestCase {
     testErrorRaisingNiladic() {
         this.assertRaises(AssertionError, () => {
             throw new AssertionError()
@@ -130,9 +127,9 @@ class AssertEqualTests extends TestCase {
     }
 }
 
-class OtherTests extends TestCase {
+class OtherTests extends unittest.TestCase {
     testOtherStuff() {
-        this.assertEqual(1, 1)
+        this.assertEqual(1, 3)
     }
 }
 
