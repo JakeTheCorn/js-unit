@@ -5,6 +5,7 @@ class AssertionError extends Error {
     }
 }
 
+// this is an untested function
 function getAllFuncs(toCheck) {
     var props = [];
     var obj = toCheck;
@@ -20,16 +21,22 @@ function getAllFuncs(toCheck) {
 class TestCase {
     run() {
         const results = {}
+        let successCount = 0
+        let failureCount = 0
         const funcNames = getAllFuncs(this).filter(f => /^test*/.test(f))
         for (let funcName of funcNames) {
             try {
                 this[funcName]()
                 results[funcName] = true
+                successCount++
             } catch (error) {
                 results[funcName] = false
+                failureCount++
             }
         }
-        console.log(results)
+        if (failureCount) {
+            console.log('FAIL', results)
+        }
     }
 
     assertEqual(a, b) {
@@ -89,17 +96,5 @@ class AssertEqualTests extends TestCase {
 }
 
 const tests = new AssertEqualTests()
-// tests.testErrorRaisingNiladic()
-// tests.testErrorRaisingMonadic()
-// tests.testNumberInEqualityRaises()
 
 tests.run()
-// try {
-
-//     tests.testFailsWhenDoesNotRaise()
-//     console.log('Failure! assertRaises did not raise')
-// } catch (error) {}
-
-// tests.testNumberEquality()
-console.log('all tests pass')
-
