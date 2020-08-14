@@ -1,8 +1,8 @@
 
 // todo:
 //   Parallel running?
-//   calling unittest.main() instead of testCaseInstance.run()
 //   redo in type script for better type hinting
+
 class TestCase {
     setUp() {}
 
@@ -11,8 +11,11 @@ class TestCase {
         let failureCount = 0
         const failures = []
         let successCount = 0
-        const funcNames = this.__getFuncNames().filter(f => /^test*/.test(f))
+        const funcNames = this.__getFuncNames()
         for (let test of funcNames) {
+            if (!/^test*/.test(test)) {
+                continue
+            }
             const instance = new this.constructor()
             instance.setUp()
             try {
