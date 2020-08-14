@@ -4,6 +4,8 @@
 //   calling unittest.main() instead of testCaseInstance.run()
 //   redo in type script for better type hinting
 class TestCase {
+    setUp() {}
+
     run() {
         let testsRunCount = 0
         let failureCount = 0
@@ -11,8 +13,10 @@ class TestCase {
         let successCount = 0
         const funcNames = this.__getFuncNames().filter(f => /^test*/.test(f))
         for (let test of funcNames) {
+            const instance = new this.constructor()
+            instance.setUp()
             try {
-                this[test]()
+                instance[test]()
                 successCount++
             } catch (error) {
                 failures.push({ test, error })
@@ -109,7 +113,11 @@ class unittest {
     static TestCase = TestCase
     static cases = []
     static register(...classes) {
-        classes.forEach(cls => unittest.cases.push(new cls()))
+        classes.forEach(cls => {
+            const c = new cls()
+            unittest.cases.push(c)
+        })
+        return unittest
     }
 
     static main() {

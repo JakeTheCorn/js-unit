@@ -69,10 +69,48 @@ class OtherTests extends unittest.TestCase {
             throw new AssertionError('Hello World')
         })
     }
-
-
 }
 
-unittest.register(AssertEqualTests, OtherTests)
+class SetUpAccessTests extends unittest.TestCase {
+    setUp() {
+        this.age = 6
+    }
 
-unittest.main()
+    testAccess() {
+        this.assertEqual(this.age, 6)
+    }
+}
+
+class SetUpAssignmentTests extends unittest.TestCase {
+    setUp() {
+        this.age = 6
+    }
+
+    testAssignment1() {
+        this.age = 7
+        this.assertEqual(this.age, 7)
+    }
+
+    testAssignment2() {
+        this.age = 8
+        this.assertEqual(this.age, 8)
+    }
+
+    testAccess() {
+        this.assertEqual(this.age, 6)
+    }
+}
+
+
+unittest
+    .register(
+        AssertEqualTests,
+        OtherTests,
+        SetUpAccessTests,
+        SetUpAssignmentTests
+    )
+
+
+if (require.main === module) {
+    unittest.main()
+}
