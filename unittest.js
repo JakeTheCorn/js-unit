@@ -41,6 +41,7 @@ class TestCase {
     }
 
     __getFuncNames() {
+        // use framework to test this function
         var self = this
         var props = [];
         var obj = self;
