@@ -1,6 +1,7 @@
 
 // todo:
 //   Parallel running?
+//   time print outs
 //   redo in type script for better type hinting
 
 class TestCase {
