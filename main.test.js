@@ -23,7 +23,9 @@ class AssertEqualTests extends unittest.TestCase {
             }
         }
 
-        this.assertRaises(AssertionError, throwFunc, 1)
+        this.assertRaises(AssertionError, () => {
+            throwFunc(1)
+        })
     }
 
     testFailsWhenDoesNotRaise() {

@@ -5,7 +5,6 @@
 //   redo in type script for better type hinting
 class TestCase {
     run() {
-        //  todo: make this func return so callers can aggregate
         let testsRunCount = 0
         let failureCount = 0
         const failures = []
@@ -48,36 +47,32 @@ class TestCase {
     }
 
     assertEqual(actual, expected) {
-        if (actual !== expected) {
+        if (actual !== expected)
             throw new Error(actual + ' !== ' + expected)
-        }
     }
 
     assertIsNull(actual) {
-        if (actual !== null) {
+        if (actual !== null)
             throw new Error(actual + ' !== null')
-        }
     }
 
     assertIsTrue(actual) {
-        if (actual !== true) {
+        if (actual !== true)
             throw new Error(actual + ' !== true')
-        }
     }
 
     assertIsFalse(actual) {
-        if (actual !== false) {
+        if (actual !== false)
             throw new Error(actual + ' !== false')
-        }
     }
 
-    assertRaises(errType, throwFunc, args) {
+    assertRaises(errType, throwFunc) {
         let err = null
         try {
             if (!(typeof throwFunc !== 'Function')) {
                 throw new Error('throw function is not callable')
             }
-            throwFunc(args)
+            throwFunc()
         } catch (error) {
             err = error
             if (err instanceof errType) {
