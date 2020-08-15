@@ -120,6 +120,7 @@ class SkipTestTests extends unittest.TestCase {
 class FailTests extends unittest.TestCase {
     testFailThrowsFailCalledError() {
         this.assertRaises(FailCalledError, () => {
+            // fail should always have a message
             this.fail()
         })
     }
