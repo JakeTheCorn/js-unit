@@ -1,20 +1,26 @@
+class SkipTestError extends Error {}
 
-// todo:
-//   Parallel running?
-//   time print outs
-//   redo in type script for better type hinting
 
 class TestCase {
     setUp() {}
+
+    skip(reason='') {
+        throw new SkipTestError(reason)
+    }
 
     run() {
         let testsRunCount = 0
         let failureCount = 0
         const failures = []
         let successCount = 0
+        let skipCount = 0
         const funcNames = this.__getFuncNames()
         for (let test of funcNames) {
-            if (!/^test*/.test(test)) {
+            if (!/^_?test*/.test(test)) {
+                continue
+            }
+            if (test[0] === '_') {
+                skipCount++
                 continue
             }
             const instance = new this.constructor()
@@ -22,16 +28,23 @@ class TestCase {
             try {
                 instance[test]()
                 successCount++
+                testsRunCount++
             } catch (error) {
-                failures.push({ test, error })
-                failureCount++
+                if (error instanceof SkipTestError) {
+                    skipCount++
+                } else { // else is a code smell
+                    failures.push({ test, error })
+                    failureCount++
+                    testsRunCount++
+                }
             }
-            testsRunCount++
+
         }
         const counts = {
             run: testsRunCount,
             success: successCount,
             failed: failureCount,
+            skipped: skipCount,
         }
 
         return {
@@ -126,15 +139,19 @@ class unittest {
     }
 
     static main() {
+        const [startSecs, startNanoSecs] = process.hrtime()
         let successCount = 0
         let failCount = 0
         let totalRun = 0
+        let skipCount = 0
         const classFailures = []
+
         for (const testCase of unittest.cases) {
             const report = testCase.run()
             totalRun += report.counts.run
             successCount += report.counts.success
             failCount += report.counts.failed
+            skipCount += report.counts.skipped
             if (report.counts.failed) {
                 classFailures.push({
                     className: report.name,
@@ -142,10 +159,18 @@ class unittest {
                 })
             }
         }
+        const [endSecs, endNanoSecs] = process.hrtime()
+
+        const timingMessage = `Test ran in ${endSecs - startSecs}s ${(endNanoSecs - startNanoSecs) / 1000000}ms`
+
+
         if (failCount === 0) {
             console.log(totalRun + ' tests run')
             console.log(successCount + ' tests pass')
-            console.log(failCount + ' tests fail')
+            skipCount && console.log(skipCount + ' tests skipped')
+            console.log(failCount + ' tests fail\n')
+
+            console.info(timingMessage)
             return
         }
         const lines = []
@@ -155,6 +180,7 @@ class unittest {
                 lines.push([line, failure.error])
             }
         }
+        console.info(timingMessage)
         for (const line of lines) {
             console.log(line[0])
             console.log(line[1])

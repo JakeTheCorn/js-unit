@@ -1,13 +1,12 @@
 const unittest = require('./unittest')
 
 
-class AssertionError extends Error {
-    constructor(message) {
-        super()
-        this.message = message
-    }
-}
+class AssertionError extends Error {}
 
+// use special internal errors for unittest
+// assertContains
+// Parallel running?
+// redo in type script for better type hinting
 
 class AssertEqualTests extends unittest.TestCase {
     testErrorRaisingNiladic() {
@@ -64,12 +63,13 @@ class OtherTests extends unittest.TestCase {
         this.assertIsFalse(false)
     }
 
-    testAssertRaisesRegex() {
+    testRaisesRegex() {
         this.assertRaisesRegex(AssertionError, /Hello World/, () => {
             throw new AssertionError('Hello World')
         })
     }
 }
+
 
 class SetUpAccessTests extends unittest.TestCase {
     setUp() {
@@ -81,6 +81,7 @@ class SetUpAccessTests extends unittest.TestCase {
     }
 }
 
+
 class SetUpAssignmentTests extends unittest.TestCase {
     setUp() {
         this.age = 6
@@ -91,13 +92,28 @@ class SetUpAssignmentTests extends unittest.TestCase {
         this.assertEqual(this.age, 7)
     }
 
+    testAccess1() {
+        this.assertEqual(this.age, 6)
+    }
+
     testAssignment2() {
         this.age = 8
         this.assertEqual(this.age, 8)
     }
 
-    testAccess() {
+    testAccess2() {
         this.assertEqual(this.age, 6)
+    }
+}
+
+class SkipTestTests extends unittest.TestCase {
+    testWithSkipMethod() {
+        this.skip()
+        this.assertEqual('THIS DOES NOT EXECUTE', true)
+    }
+
+    _testWithLeadingUnderscore() {
+        this.assertEqual('THIS SHOULD NOT RUN', true)
     }
 }
 
@@ -107,7 +123,8 @@ unittest
         AssertEqualTests,
         OtherTests,
         SetUpAccessTests,
-        SetUpAssignmentTests
+        SetUpAssignmentTests,
+        SkipTestTests,
     )
 
 
