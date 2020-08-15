@@ -76,17 +76,6 @@ class OtherTests extends unittest.TestCase {
 }
 
 
-class SetUpAccessTests extends unittest.TestCase {
-    setUp() {
-        this.age = 6
-    }
-
-    testAccess() {
-        this.assertEqual(this.age, 6)
-    }
-}
-
-
 class SetUpAssignmentTests extends unittest.TestCase {
     setUp() {
         this.age = 6
@@ -181,7 +170,6 @@ unittest
     .register(
         AssertEqualTests,
         OtherTests,
-        SetUpAccessTests,
         SetUpAssignmentTests,
         SkipTestTests,
         FailTests,
