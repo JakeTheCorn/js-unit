@@ -1,10 +1,10 @@
 const unittest = require('./unittest')
-
+const FailCalledError = require('./unittest').FailCalledError
 
 class AssertionError extends Error {}
 
 // use special internal errors for unittest
-// assertContains
+// assertContains()
 // Parallel running?
 // redo in type script for better type hinting
 
@@ -117,6 +117,20 @@ class SkipTestTests extends unittest.TestCase {
     }
 }
 
+class FailTests extends unittest.TestCase {
+    testFailThrowsFailCalledError() {
+        this.assertRaises(FailCalledError, () => {
+            this.fail()
+        })
+    }
+
+    testFailThrowsErrorWithMessage() {
+        this.assertRaisesRegex(FailCalledError, /fails/, () => {
+            this.fail('fails')
+        })
+    }
+}
+
 
 unittest
     .register(
@@ -125,6 +139,7 @@ unittest
         SetUpAccessTests,
         SetUpAssignmentTests,
         SkipTestTests,
+        FailTests
     )
 
 

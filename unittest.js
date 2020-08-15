@@ -1,8 +1,14 @@
 class SkipTestError extends Error {}
 
+class FailCalledError extends Error {}
+
 
 class TestCase {
     setUp() {}
+
+    fail(reason) {
+        throw new FailCalledError(reason)
+    }
 
     skip(reason='') {
         throw new SkipTestError(reason)
@@ -191,3 +197,4 @@ class unittest {
 }
 
 module.exports = unittest
+module.exports.FailCalledError = FailCalledError
