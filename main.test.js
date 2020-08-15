@@ -1,14 +1,15 @@
 const unittest = require('./unittest')
 const FailCalledError = require('./unittest').FailCalledError
 const AssertInError = require('./unittest').AssertInError
+const FailCalledWithoutReason = require('./unittest').FailCalledWithoutReason
 
 class AssertionError extends Error {}
 
 // use special internal errors for unittest
 // Parallel running?
 // redo in type script for better type hinting
-// fail should always have a message and no test should run without a message
 // assertRaisesRegex should return more helpful text for pattern does not match
+// assertRaisesTests should be in their own class
 
 class AssertEqualTests extends unittest.TestCase {
     testErrorRaisingNiladic() {
@@ -122,13 +123,19 @@ class SkipTestTests extends unittest.TestCase {
 class FailTests extends unittest.TestCase {
     testFailThrowsFailCalledError() {
         this.assertRaises(FailCalledError, () => {
-            this.fail()
+            this.fail('reason is not optional')
         })
     }
 
     testFailThrowsErrorWithMessage() {
         this.assertRaisesRegex(FailCalledError, /fails/, () => {
             this.fail('fails')
+        })
+    }
+
+    testFailCannotBeCalledWithoutReason() {
+        this.assertRaisesRegex(FailCalledWithoutReason, /fail\(\) cannot be called without reason/, () => {
+            this.fail()
         })
     }
 }

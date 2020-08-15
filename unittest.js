@@ -1,6 +1,7 @@
 class SkipTestError extends Error {}
 
 class FailCalledError extends Error {}
+class FailCalledWithoutReason extends Error {}
 
 class AssertInError extends Error {}
 
@@ -9,6 +10,9 @@ class TestCase {
     setUp() {}
 
     fail(reason) {
+        if (!reason) {
+            throw new FailCalledWithoutReason('fail() cannot be called without reason')
+        }
         throw new FailCalledError(reason)
     }
 
@@ -209,3 +213,4 @@ class unittest {
 module.exports = unittest
 module.exports.FailCalledError = FailCalledError
 module.exports.AssertInError = AssertInError
+module.exports.FailCalledWithoutReason = FailCalledWithoutReason
