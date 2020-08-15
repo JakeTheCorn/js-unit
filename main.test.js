@@ -2,6 +2,8 @@ const unittest = require('./unittest')
 const FailCalledError = require('./unittest').FailCalledError
 const AssertInError = require('./unittest').AssertInError
 const FailCalledWithoutReason = require('./unittest').FailCalledWithoutReason
+const AssertInArrayError = require('./unittest').AssertInArrayError
+const AssertInObjectError = require('./unittest').AssertInObjectError
 
 class AssertionError extends Error {}
 
@@ -149,6 +151,28 @@ class AssertInTests extends unittest.TestCase {
         this.assertRaisesRegex(AssertInError, /Hello could not be found in nope/, () => {
             this.assertIn('Hello', 'nope')
         })
+    }
+
+    testArrayInFailing() {
+        const r = /1 could not be found in [2, 3]/
+        this.assertRaisesRegex(AssertInArrayError, r, () => {
+            this.assertIn(1, [2, 3])
+        })
+    }
+
+    testArrayInPassing() {
+        this.assertIn(1, [1, 2])
+    }
+
+    testJsObjectInFailing() {
+        const r = /'name' could not be found in {"age":4}/
+        this.assertRaisesRegex(AssertInObjectError, r, () => {
+            this.assertIn('name', {age: 4})
+        })
+    }
+
+    testJsObjectInPassing() {
+        this.assertIn('age', {age: 4})
     }
 }
 

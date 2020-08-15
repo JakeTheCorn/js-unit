@@ -4,6 +4,8 @@ class FailCalledError extends Error {}
 class FailCalledWithoutReason extends Error {}
 
 class AssertInError extends Error {}
+class AssertInArrayError extends Error {}
+class AssertInObjectError extends Error {}
 
 
 class TestCase {
@@ -75,7 +77,7 @@ class TestCase {
             props = props.concat(Object.getOwnPropertyNames(obj));
         } while (obj = Object.getPrototypeOf(obj));
 
-        return props.filter(function(e, i, arr) {
+        return props.filter((e, i, arr) => {
             if (e!=arr[i+1] && typeof self[e] == 'function') return true;
         });
     }
@@ -84,6 +86,19 @@ class TestCase {
         if (typeof member === 'string' && typeof container === 'string') {
             if (container.indexOf(member) === -1) {
                 throw new AssertInError(member + ' could not be found in ' + container)
+            }
+            return
+        }
+        if (Array.isArray(container)) {
+            if (container.indexOf(member) === -1) {
+                throw new AssertInArrayError(member + ' could not be found in ' + container)
+            }
+            return
+        }
+
+        if (typeof container === 'object') {
+            if (Object.keys(container).indexOf(member) === -1) {
+                throw new AssertInObjectError("'" + member + "'" + ' could not be found in ' + JSON.stringify(container))
             }
         }
     }
@@ -141,7 +156,7 @@ class TestCase {
                 throw new Error('Did not raise instance of ' + klass.name)
             }
             if (!regex.test(error.message)) {
-                throw new Error('error message did not match pattern ' + regex)
+                throw new Error(error.message + ' does not match pattern ' + regex)
             }
         }
     }
@@ -214,3 +229,5 @@ module.exports = unittest
 module.exports.FailCalledError = FailCalledError
 module.exports.AssertInError = AssertInError
 module.exports.FailCalledWithoutReason = FailCalledWithoutReason
+module.exports.AssertInArrayError = AssertInArrayError
+module.exports.AssertInObjectError = AssertInObjectError
