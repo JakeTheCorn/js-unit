@@ -5,9 +5,10 @@ const AssertInError = require('./unittest').AssertInError
 class AssertionError extends Error {}
 
 // use special internal errors for unittest
-// assertContains()
 // Parallel running?
 // redo in type script for better type hinting
+// fail should always have a message and no test should run without a message
+// assertRaisesRegex should return more helpful text for pattern does not match
 
 class AssertEqualTests extends unittest.TestCase {
     testErrorRaisingNiladic() {
@@ -121,7 +122,6 @@ class SkipTestTests extends unittest.TestCase {
 class FailTests extends unittest.TestCase {
     testFailThrowsFailCalledError() {
         this.assertRaises(FailCalledError, () => {
-            // fail should always have a message
             this.fail()
         })
     }
@@ -139,7 +139,6 @@ class AssertInTests extends unittest.TestCase {
     }
 
     testWithStringFailing() {
-        // assertRaisesRegex should return more helpful text for pattern does not match
         this.assertRaisesRegex(AssertInError, /Hello could not be found in nope/, () => {
             this.assertIn('Hello', 'nope')
         })
