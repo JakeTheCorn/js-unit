@@ -1,5 +1,6 @@
 const unittest = require('./unittest')
 const FailCalledError = require('./unittest').FailCalledError
+const AssertInError = require('./unittest').AssertInError
 
 class AssertionError extends Error {}
 
@@ -132,6 +133,19 @@ class FailTests extends unittest.TestCase {
     }
 }
 
+class AssertInTests extends unittest.TestCase {
+    testWithStringPassing() {
+        this.assertIn('hello', 'hello world')
+    }
+
+    testWithStringFailing() {
+        // assertRaisesRegex should return more helpful text for pattern does not match
+        this.assertRaisesRegex(AssertInError, /Hello could not be found in nope/, () => {
+            this.assertIn('Hello', 'nope')
+        })
+    }
+}
+
 
 unittest
     .register(
@@ -140,7 +154,8 @@ unittest
         SetUpAccessTests,
         SetUpAssignmentTests,
         SkipTestTests,
-        FailTests
+        FailTests,
+        AssertInTests,
     )
 
 

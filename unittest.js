@@ -2,6 +2,8 @@ class SkipTestError extends Error {}
 
 class FailCalledError extends Error {}
 
+class AssertInError extends Error {}
+
 
 class TestCase {
     setUp() {}
@@ -72,6 +74,14 @@ class TestCase {
         return props.filter(function(e, i, arr) {
             if (e!=arr[i+1] && typeof self[e] == 'function') return true;
         });
+    }
+
+    assertIn(member, container) {
+        if (typeof member === 'string' && typeof container === 'string') {
+            if (container.indexOf(member) === -1) {
+                throw new AssertInError(member + ' could not be found in ' + container)
+            }
+        }
     }
 
     assertEqual(actual, expected) {
@@ -198,3 +208,4 @@ class unittest {
 
 module.exports = unittest
 module.exports.FailCalledError = FailCalledError
+module.exports.AssertInError = AssertInError
