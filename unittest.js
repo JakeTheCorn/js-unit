@@ -13,13 +13,9 @@ class TestCase {
 
     fail(reason) {
         if (!reason) {
-            throw new FailCalledWithoutReason('fail() cannot be called without reason')
+            throw new FailCalledWithoutReason('fail(reason: string) cannot be called without reason')
         }
         throw new FailCalledError(reason)
-    }
-
-    skip(reason='') {
-        throw new SkipTestError(reason)
     }
 
     run() {
@@ -28,8 +24,10 @@ class TestCase {
         const failures = []
         let successCount = 0
         let skipCount = 0
-        const funcNames = this.__getFuncNames()
-        for (let test of funcNames) {
+        let funcNames = this.__getFuncNames()
+        let test
+        for (let i = 0; i < funcNames.length; i++) {
+            test = funcNames[i]
             if (!/^_?test*/.test(test)) {
                 continue
             }
@@ -37,23 +35,19 @@ class TestCase {
                 skipCount++
                 continue
             }
-            const instance = new this.constructor()
+            let instance = new this.constructor()
             instance.setUp()
             try {
                 instance[test]()
                 successCount++
                 testsRunCount++
             } catch (error) {
-                if (error instanceof SkipTestError) {
-                    skipCount++
-                } else { // else is a code smell
-                    failures.push({ test, error })
-                    failureCount++
-                    testsRunCount++
-                }
+                failures.push({ test, error })
+                failureCount++
+                testsRunCount++
             }
-
         }
+
         const counts = {
             run: testsRunCount,
             success: successCount,
@@ -84,16 +78,12 @@ class TestCase {
 
     assertIn(member, container) {
         if (typeof member === 'string' && typeof container === 'string') {
-            if (container.indexOf(member) === -1) {
-                throw new AssertInError(member + ' could not be found in ' + container)
-            }
-            return
+            if (container.indexOf(member) !== -1) return
+            throw new AssertInError(member + ' could not be found in ' + container)
         }
         if (Array.isArray(container)) {
-            if (container.indexOf(member) === -1) {
-                throw new AssertInArrayError(member + ' could not be found in ' + container)
-            }
-            return
+            if (container.indexOf(member) !== -1) return
+            throw new AssertInArrayError(member + ' could not be found in ' + container)
         }
 
         if (typeof container === 'object') {
@@ -181,8 +171,8 @@ class unittest {
         let skipCount = 0
         const classFailures = []
 
-        for (const testCase of unittest.cases) {
-            const report = testCase.run()
+        for (var i = 0; i < unittest.cases.length; i++) {
+            const report = unittest.cases[i].run()
             totalRun += report.counts.run
             successCount += report.counts.success
             failCount += report.counts.failed
@@ -200,12 +190,14 @@ class unittest {
 
 
         if (failCount === 0) {
-            console.log(totalRun + ' tests run')
-            console.log(successCount + ' tests pass')
-            skipCount && console.log(skipCount + ' tests skipped')
-            console.log(failCount + ' tests fail\n')
+            console.info(`
+${totalRun} tests run
+${successCount} tests pass
+${skipCount} tests skipped
+${failCount} tests fail
 
-            console.info(timingMessage)
+${timingMessage}
+            `)
             return
         }
         const lines = []

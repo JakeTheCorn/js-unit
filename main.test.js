@@ -10,25 +10,17 @@ class AssertionError extends Error {}
 // use special internal errors for unittest
 // Parallel running?
 // redo in type script for better type hinting
-// assertRaisesRegex should return more helpful text for pattern does not match
-// assertRaisesTests should be in their own class
 
 class AssertEqualTests extends unittest.TestCase {
+    testNumberEquality() {
+        this.assertEqual(1, 1)
+    }
+}
+
+class AssertRaisesTests extends unittest.TestCase {
     testErrorRaisingNiladic() {
         this.assertRaises(AssertionError, () => {
             throw new AssertionError()
-        })
-    }
-
-    testErrorRaisingMonadic() {
-        const throwFunc = a => {
-            if (a === 1) {
-                throw new AssertionError('A EQUALS ONE!')
-            }
-        }
-
-        this.assertRaises(AssertionError, () => {
-            throwFunc(1)
         })
     }
 
@@ -36,18 +28,6 @@ class AssertEqualTests extends unittest.TestCase {
         this.assertRaises(AssertionError, () => {
             throw new AssertionError()
         })
-    }
-
-    testNumberEquality() {
-        this.assertEqual(1, 1)
-    }
-
-    testNumberInEqualityRaises() {
-        this.assertEqual(1, 1)
-    }
-
-    testOnePlusOne() {
-        this.assertEqual(1 + 1, 2)
     }
 }
 
@@ -101,11 +81,6 @@ class SetUpAssignmentTests extends unittest.TestCase {
 }
 
 class SkipTestTests extends unittest.TestCase {
-    testWithSkipMethod() {
-        this.skip()
-        this.assertEqual('THIS DOES NOT EXECUTE', true)
-    }
-
     _testWithLeadingUnderscore() {
         this.assertEqual('THIS SHOULD NOT RUN', true)
     }
@@ -125,7 +100,8 @@ class FailTests extends unittest.TestCase {
     }
 
     testFailCannotBeCalledWithoutReason() {
-        this.assertRaisesRegex(FailCalledWithoutReason, /fail\(\) cannot be called without reason/, () => {
+        const r = /fail\(reason: string\) cannot be called without reason/
+        this.assertRaisesRegex(FailCalledWithoutReason, r, () => {
             this.fail()
         })
     }
@@ -169,6 +145,7 @@ class AssertInTests extends unittest.TestCase {
 unittest
     .register(
         AssertEqualTests,
+        AssertRaisesTests,
         OtherTests,
         SetUpAssignmentTests,
         SkipTestTests,
