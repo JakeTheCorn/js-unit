@@ -4,6 +4,8 @@ const AssertInError = require('./unittest').AssertInError
 const FailCalledWithoutReason = require('./unittest').FailCalledWithoutReason
 const AssertInArrayError = require('./unittest').AssertInArrayError
 const AssertInObjectError = require('./unittest').AssertInObjectError
+const AssertStringContainsError = require('./unittest').AssertStringContainsError
+const AssertArrayContainsError = require('./unittest').AssertArrayContainsError
 
 class AssertionError extends Error {}
 
@@ -14,6 +16,54 @@ class AssertionError extends Error {}
 class AssertEqualTests extends unittest.TestCase {
     testNumberEquality() {
         this.assertEqual(1, 1)
+    }
+}
+
+class AssertStringContainsTests extends unittest.TestCase {
+    testTypeFailure() {
+        const r = /assertStringContains must be called with string arguments./
+        this.assertRaisesRegex(AssertStringContainsError, r, () => {
+            this.assertStringContains('hello', null)
+        })
+    }
+
+    testValueFailure() {
+        const r = /'hello' could not be found in 'world'/
+        this.assertRaisesRegex(AssertStringContainsError, r, () => {
+            this.assertStringContains('hello', 'world')
+        })
+    }
+
+    testPass() {
+        this.assertStringContains('hello', 'hello world')
+    }
+
+}
+
+class AssertArrayContainsTests extends unittest.TestCase {
+    testTypeFailure() {
+        const r = /container arg must be an instance of Array/
+        this.assertRaisesRegex(AssertArrayContainsError, r, () => {
+            this.assertArrayContains(1, null)
+        })
+    }
+
+    testEmptyContainer() {
+        const r = /container arg must not be empty Array/
+        this.assertRaisesRegex(AssertArrayContainsError, r, () => {
+            this.assertArrayContains(1, [])
+        })
+    }
+// empty array?
+    testValueFailure() {
+        const r = /1 could not be found in \[2,3]/
+        this.assertRaisesRegex(AssertArrayContainsError, r, () => {
+            this.assertArrayContains(1, [2, 3])
+        })
+    }
+
+    testPass() {
+        this.assertArrayContains(1, [1, 2])
     }
 }
 
@@ -151,6 +201,8 @@ unittest
         SkipTestTests,
         FailTests,
         AssertInTests,
+        AssertStringContainsTests,
+        AssertArrayContainsTests
     )
 
 

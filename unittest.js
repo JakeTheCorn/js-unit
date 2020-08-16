@@ -6,6 +6,8 @@ class FailCalledWithoutReason extends Error {}
 class AssertInError extends Error {}
 class AssertInArrayError extends Error {}
 class AssertInObjectError extends Error {}
+class AssertStringContainsError extends Error {}
+class AssertArrayContainsError extends Error {}
 
 
 class TestCase {
@@ -91,6 +93,31 @@ class TestCase {
                 throw new AssertInObjectError("'" + member + "'" + ' could not be found in ' + JSON.stringify(container))
             }
         }
+        // throw for unrecognized type
+        // assertIn might be better as
+        // assertArrayContains
+        // assertObjectContains
+    }
+
+    assertStringContains(member, container) {
+        let m_type = typeof member
+        let c_type = typeof container
+        if (c_type !== 'string' || m_type !== 'string') {
+            throw new AssertStringContainsError('assertStringContains must be called with string arguments.')
+        }
+        if (container.indexOf(member) !== -1) return
+        throw new AssertStringContainsError(`'${member}' could not be found in '${container}'`)
+    }
+
+    assertArrayContains(member, container) {
+        if (!Array.isArray(container)) {
+            throw new AssertArrayContainsError('container arg must be an instance of Array')
+        }
+        if (container.length === 0) {
+            throw new AssertArrayContainsError('container arg must not be empty Array')
+        }
+        if (container.indexOf(member) !== -1) return
+        throw new AssertArrayContainsError(`${member} could not be found in [${container}]`)
     }
 
     assertEqual(actual, expected) {
@@ -223,3 +250,5 @@ module.exports.AssertInError = AssertInError
 module.exports.FailCalledWithoutReason = FailCalledWithoutReason
 module.exports.AssertInArrayError = AssertInArrayError
 module.exports.AssertInObjectError = AssertInObjectError
+module.exports.AssertStringContainsError = AssertStringContainsError
+module.exports.AssertArrayContainsError = AssertArrayContainsError
