@@ -247,12 +247,15 @@ ${timingMessage}
     }
 }
 
+unittest.errors = {
+    FailCalledError,
+    AssertInError,
+    FailCalledWithoutReason,
+    AssertInArrayError,
+    AssertInObjectError,
+    AssertStringContainsError,
+    AssertArrayContainsError,
+    AssertObjectContainsError
+}
+
 module.exports = unittest
-module.exports.FailCalledError = FailCalledError
-module.exports.AssertInError = AssertInError
-module.exports.FailCalledWithoutReason = FailCalledWithoutReason
-module.exports.AssertInArrayError = AssertInArrayError
-module.exports.AssertInObjectError = AssertInObjectError
-module.exports.AssertStringContainsError = AssertStringContainsError
-module.exports.AssertArrayContainsError = AssertArrayContainsError
-module.exports.AssertObjectContainsError = AssertObjectContainsError
