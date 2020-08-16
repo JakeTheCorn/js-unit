@@ -6,6 +6,7 @@ const AssertInArrayError = require('./unittest').AssertInArrayError
 const AssertInObjectError = require('./unittest').AssertInObjectError
 const AssertStringContainsError = require('./unittest').AssertStringContainsError
 const AssertArrayContainsError = require('./unittest').AssertArrayContainsError
+const AssertObjectContainsError = require('./unittest').AssertObjectContainsError
 
 class AssertionError extends Error {}
 
@@ -54,7 +55,7 @@ class AssertArrayContainsTests extends unittest.TestCase {
             this.assertArrayContains(1, [])
         })
     }
-// empty array?
+
     testValueFailure() {
         const r = /1 could not be found in \[2,3]/
         this.assertRaisesRegex(AssertArrayContainsError, r, () => {
@@ -66,6 +67,17 @@ class AssertArrayContainsTests extends unittest.TestCase {
         this.assertArrayContains(1, [1, 2])
     }
 }
+
+
+class AssertObjectContainsTests extends unittest.TestCase {
+    testTypeFailure() {
+        const r = /container arg must be an instance of object/
+        this.assertRaisesRegex(AssertObjectContainsError, r, () => {
+            this.assertObjectContains(1, null)
+        })
+    }
+}
+
 
 class AssertRaisesTests extends unittest.TestCase {
     testErrorRaisingNiladic() {
@@ -202,7 +214,8 @@ unittest
         FailTests,
         AssertInTests,
         AssertStringContainsTests,
-        AssertArrayContainsTests
+        AssertArrayContainsTests,
+        AssertObjectContainsTests
     )
 
 

@@ -1,5 +1,3 @@
-class SkipTestError extends Error {}
-
 class FailCalledError extends Error {}
 class FailCalledWithoutReason extends Error {}
 
@@ -8,6 +6,7 @@ class AssertInArrayError extends Error {}
 class AssertInObjectError extends Error {}
 class AssertStringContainsError extends Error {}
 class AssertArrayContainsError extends Error {}
+class AssertObjectContainsError extends Error {}
 
 
 class TestCase {
@@ -118,6 +117,10 @@ class TestCase {
         }
         if (container.indexOf(member) !== -1) return
         throw new AssertArrayContainsError(`${member} could not be found in [${container}]`)
+    }
+
+    assertObjectContains(member, container) {
+
     }
 
     assertEqual(actual, expected) {
@@ -252,3 +255,4 @@ module.exports.AssertInArrayError = AssertInArrayError
 module.exports.AssertInObjectError = AssertInObjectError
 module.exports.AssertStringContainsError = AssertStringContainsError
 module.exports.AssertArrayContainsError = AssertArrayContainsError
+module.exports.AssertObjectContainsError = AssertObjectContainsError
