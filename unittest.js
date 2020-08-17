@@ -1,8 +1,6 @@
 class FailCalledError extends Error {}
 class FailCalledWithoutReason extends Error {}
 
-class AssertInArrayError extends Error {}
-class AssertInObjectError extends Error {}
 class AssertStringContainsError extends Error {}
 class AssertArrayContainsError extends Error {}
 class AssertObjectContainsError extends Error {}
