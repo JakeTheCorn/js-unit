@@ -127,10 +127,6 @@ class OtherTests extends unittest.TestCase {
         this.assertIsTrue(true)
     }
 
-    testIsFalse() {
-        this.assertIsFalse(false)
-    }
-
     testRaisesRegex() {
         this.assertRaisesRegex(AssertionError, /Hello World/, () => {
             throw new AssertionError('Hello World')
@@ -138,9 +134,17 @@ class OtherTests extends unittest.TestCase {
     }
 }
 
-// class IsFalseTests extends unittest.TestCase {
+class IsFalseTests extends unittest.TestCase {
+    testPass() {
+        this.assertIsFalse(false)
+    }
 
-// }
+    testFail() {
+        this.assertRaisesRegex(Error, /true !== false/, () => {
+            this.assertIsFalse(true)
+        })
+    }
+}
 
 
 class SetUpAssignmentTests extends unittest.TestCase {
@@ -206,7 +210,8 @@ unittest
         AssertStringContainsTests,
         AssertArrayContainsTests,
         AssertTypeofTests,
-        AssertArrayEqualsTests
+        AssertArrayEqualsTests,
+        IsFalseTests
     )
 
 
