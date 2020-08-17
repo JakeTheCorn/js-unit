@@ -1,22 +1,37 @@
-const fs = require('fs')
+const Utils = require('./utils')
 
-all('./')
+main()
 
-function all(path) {
-    fs.readdir(path, { encoding: 'UTF-8' }, (_err, files) => {
-        for (const file of files) {
-            let f = path + file
-            if (file === '.git') {
-                continue
-            }
-            if (fs.lstatSync(f).isDirectory()) {
-                return all(f + '/')
-            }
-            if (!/\.test\.js/.test(f)) {
-                continue
-            }
-            require(f)
-        }
-        require('./unittest').main()
-    })
+async function main() {
+    await all('./')
 }
+
+async function all(path) {
+    const testFiles = await getTestFilesNames(path)
+    for (const testFile of testFiles) {
+        require(testFile)
+    }
+    require('./unittest').main()
+}
+
+async function getTestFilesNames(path = './') {
+    const utils = new Utils()
+    const testFiles = []
+    const files = await utils.readdir(path, { exclusions: ['.git', 'node_modules'] })
+    for (const file of files) {
+        let f = path + file
+        if (file === '.git' || file === 'node_modules') {
+            continue
+        }
+        if (utils.isDirectory(f)) {
+            const files = await getTestFilesNames(f + '/')
+            testFiles.push(...files)
+        }
+        if (/\.test\.js/.test(f)) {
+            testFiles.push(f)
+        }
+    }
+    return testFiles
+}
+
+
