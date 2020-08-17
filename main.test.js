@@ -8,8 +8,6 @@ const {
     AssertArrayEqualsError
 } = unittest.errors
 
-class AssertionError extends Error {}
-
 class AssertEqualTests extends unittest.TestCase {
     testNumberEquality() {
         this.assertEqual(1, 1)
@@ -101,38 +99,51 @@ class AssertArrayEqualsTests extends unittest.TestCase {
 
 
 class AssertRaisesTests extends unittest.TestCase {
-    testErrorRaisingNiladic() {
-        this.assertRaises(AssertionError, () => {
-            throw new AssertionError()
-        })
-    }
+    testPass() {
+        class Err extends Error {}
 
-    testFailsWhenDoesNotRaise() {
-        this.assertRaises(AssertionError, () => {
-            throw new AssertionError()
+        this.assertRaises(Err, () => {
+            throw new Err()
         })
     }
 }
 
-class OtherTests extends unittest.TestCase {
-    testOtherStuff() {
-        this.assertEqual(null, null)
-    }
+class RaisesRegexTests extends unittest.TestCase {
+    testPass() {
+        class Err extends Error {}
 
-    testIsNull() {
+        this.assertRaisesRegex(Err, /Hello World/, () => {
+            throw new Err('Hello World')
+        })
+    }
+}
+
+
+class IsNullTests extends unittest.TestCase {
+    testPass() {
         this.assertIsNull(null)
     }
 
-    testIsTrue() {
-        this.assertIsTrue(true)
-    }
-
-    testRaisesRegex() {
-        this.assertRaisesRegex(AssertionError, /Hello World/, () => {
-            throw new AssertionError('Hello World')
+    testFail() {
+        this.assertRaisesRegex(Error, /HEY !== null/, () => {
+            this.assertIsNull('HEY')
         })
     }
 }
+
+
+class IsTrueTests extends unittest.TestCase {
+    testPass() {
+        this.assertIsTrue(true)
+    }
+
+    testFail() {
+        this.assertRaisesRegex(Error, /HEY !== true/, () => {
+            this.assertIsTrue('HEY')
+        })
+    }
+}
+
 
 class IsFalseTests extends unittest.TestCase {
     testPass() {
@@ -203,7 +214,7 @@ unittest
     .register(
         AssertEqualTests,
         AssertRaisesTests,
-        OtherTests,
+        RaisesRegexTests,
         SetUpAssignmentTests,
         SkipTestTests,
         FailTests,
@@ -211,7 +222,9 @@ unittest
         AssertArrayContainsTests,
         AssertTypeofTests,
         AssertArrayEqualsTests,
-        IsFalseTests
+        IsFalseTests,
+        IsTrueTests,
+        IsNullTests,
     )
 
 
