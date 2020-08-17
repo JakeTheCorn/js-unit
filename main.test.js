@@ -1,13 +1,11 @@
 const unittest = require('./unittest')
 const {
     FailCalledError,
-    AssertInError,
     FailCalledWithoutReason,
-    AssertInArrayError,
-    AssertInObjectError,
     AssertStringContainsError,
     AssertArrayContainsError,
-    AssertTypeofError
+    AssertTypeofError,
+    AssertArrayEqualsError
 } = unittest.errors
 
 class AssertionError extends Error {}
@@ -81,6 +79,27 @@ class AssertTypeofTests extends unittest.TestCase {
 
     testPass() {
         this.assertTypeof('hello', 'string')
+    }
+}
+
+
+class AssertArrayEqualsTests extends unittest.TestCase {
+    testTypeFailure() {
+        const r = /assertArrayEquals takes two array arguments./
+        this.assertRaisesRegex(AssertArrayEqualsError, r, () => {
+            this.assertArrayEquals(null, undefined)
+        })
+    }
+
+    testFailure() {
+        const r = /arrays not equal. First differing element found at index 0/
+        this.assertRaisesRegex(AssertArrayEqualsError, r, () => {
+            this.assertArrayEquals([1], [2])
+        })
+    }
+
+    testPass() {
+        this.assertArrayEquals([1], [1])
     }
 }
 
@@ -175,40 +194,6 @@ class FailTests extends unittest.TestCase {
     }
 }
 
-class AssertInTests extends unittest.TestCase {
-    testWithStringPassing() {
-        this.assertIn('hello', 'hello world')
-    }
-
-    testWithStringFailing() {
-        this.assertRaisesRegex(AssertInError, /Hello could not be found in nope/, () => {
-            this.assertIn('Hello', 'nope')
-        })
-    }
-
-    testArrayInFailing() {
-        const r = /1 could not be found in [2, 3]/
-        this.assertRaisesRegex(AssertInArrayError, r, () => {
-            this.assertIn(1, [2, 3])
-        })
-    }
-
-    testArrayInPassing() {
-        this.assertIn(1, [1, 2])
-    }
-
-    testJsObjectInFailing() {
-        const r = /'name' could not be found in {"age":4}/
-        this.assertRaisesRegex(AssertInObjectError, r, () => {
-            this.assertIn('name', {age: 4})
-        })
-    }
-
-    testJsObjectInPassing() {
-        this.assertIn('age', {age: 4})
-    }
-}
-
 
 unittest
     .register(
@@ -218,10 +203,10 @@ unittest
         SetUpAssignmentTests,
         SkipTestTests,
         FailTests,
-        AssertInTests,
         AssertStringContainsTests,
         AssertArrayContainsTests,
-        AssertTypeofTests
+        AssertTypeofTests,
+        AssertArrayEqualsTests
     )
 
 

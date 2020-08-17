@@ -1,13 +1,13 @@
 class FailCalledError extends Error {}
 class FailCalledWithoutReason extends Error {}
 
-class AssertInError extends Error {}
 class AssertInArrayError extends Error {}
 class AssertInObjectError extends Error {}
 class AssertStringContainsError extends Error {}
 class AssertArrayContainsError extends Error {}
 class AssertObjectContainsError extends Error {}
 class AssertTypeofError extends Error {}
+class AssertArrayEqualsError extends Error {}
 
 
 class TestCase {
@@ -84,26 +84,19 @@ class TestCase {
         }
     }
 
-    assertIn(member, container) {
-        if (typeof member === 'string' && typeof container === 'string') {
-            if (container.indexOf(member) !== -1) return
-            throw new AssertInError(member + ' could not be found in ' + container)
-        }
-        if (Array.isArray(container)) {
-            if (container.indexOf(member) !== -1) return
-            throw new AssertInArrayError(member + ' could not be found in ' + container)
+    assertArrayEquals(actual, expected) {
+        if (!Array.isArray(actual) || !Array.isArray(expected)) {
+            throw new AssertArrayEqualsError('assertArrayEquals takes two array arguments.')
         }
 
-        if (typeof container === 'object') {
-            if (Object.keys(container).indexOf(member) === -1) {
-                throw new AssertInObjectError("'" + member + "'" + ' could not be found in ' + JSON.stringify(container))
+        for (let i = 0; i < actual.length; i++) {
+            if (actual[i] !== expected[i]) {
+                let msg = 'arrays not equal. First differing element found at index ' + i
+                throw new AssertArrayEqualsError(msg)
             }
         }
-        // throw for unrecognized type
-        // assertIn might be better as
-        // assertArrayContains
-        // assertObjectContains
     }
+
 
     assertStringContains(member, container) {
         let m_type = typeof member
@@ -149,7 +142,7 @@ class TestCase {
     assertRaises(errType, throwFunc) {
         let err = null
         try {
-            if (!(typeof throwFunc !== 'Function')) {
+            if (typeof throwFunc !== 'function') {
                 throw new Error('throw function is not callable')
             }
             throwFunc()
@@ -252,14 +245,12 @@ ${timingMessage}
 
 unittest.errors = {
     FailCalledError,
-    AssertInError,
     FailCalledWithoutReason,
-    AssertInArrayError,
-    AssertInObjectError,
     AssertStringContainsError,
     AssertArrayContainsError,
     AssertObjectContainsError,
     AssertTypeofError,
+    AssertArrayEqualsError
 }
 
 module.exports = unittest
