@@ -17,7 +17,7 @@ async function all(path) {
 async function getTestFilesNames(path = './') {
     const utils = new Utils()
     const testFiles = []
-    const files = await utils.readdir(path, { exclusions: ['.git', 'node_modules'] })
+    const files = await utils.readdir(path)
     for (const file of files) {
         let f = path + file
         if (file === '.git' || file === 'node_modules') {
