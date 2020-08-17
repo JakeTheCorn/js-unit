@@ -2,7 +2,7 @@ const unittest = require('../../unittest')
 
 class SubdirTests extends unittest.TestCase {
     test() {
-        this.assertEqual(2, 2)
+        this.assertEqual(3, 3)
     }
 }
 
