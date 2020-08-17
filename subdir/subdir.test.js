@@ -4,6 +4,10 @@ class SubdirTests extends unittest.TestCase {
     test() {
         this.assertEqual(1, 1)
     }
+
+    _testSkip() {
+
+    }
 }
 
 unittest

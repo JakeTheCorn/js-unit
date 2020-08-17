@@ -10,10 +10,6 @@ const {
 
 class AssertionError extends Error {}
 
-// use special internal errors for unittest
-// Parallel running?
-// redo in type script for better type hinting
-
 class AssertEqualTests extends unittest.TestCase {
     testNumberEquality() {
         this.assertEqual(1, 1)
@@ -141,6 +137,10 @@ class OtherTests extends unittest.TestCase {
         })
     }
 }
+
+// class IsFalseTests extends unittest.TestCase {
+
+// }
 
 
 class SetUpAssignmentTests extends unittest.TestCase {
