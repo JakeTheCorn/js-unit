@@ -7,6 +7,7 @@ class AssertInObjectError extends Error {}
 class AssertStringContainsError extends Error {}
 class AssertArrayContainsError extends Error {}
 class AssertObjectContainsError extends Error {}
+class AssertTypeofError extends Error {}
 
 
 class TestCase {
@@ -77,6 +78,12 @@ class TestCase {
         });
     }
 
+    assertTypeof(subject, type) {
+        if (typeof subject !== type) {
+            throw new AssertTypeofError(`typeof ${subject} !== ${type}`)
+        }
+    }
+
     assertIn(member, container) {
         if (typeof member === 'string' && typeof container === 'string') {
             if (container.indexOf(member) !== -1) return
@@ -117,10 +124,6 @@ class TestCase {
         }
         if (container.indexOf(member) !== -1) return
         throw new AssertArrayContainsError(`${member} could not be found in [${container}]`)
-    }
-
-    assertObjectContains(member, container) {
-
     }
 
     assertEqual(actual, expected) {
@@ -255,7 +258,8 @@ unittest.errors = {
     AssertInObjectError,
     AssertStringContainsError,
     AssertArrayContainsError,
-    AssertObjectContainsError
+    AssertObjectContainsError,
+    AssertTypeofError,
 }
 
 module.exports = unittest

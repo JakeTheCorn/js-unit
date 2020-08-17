@@ -7,7 +7,7 @@ const {
     AssertInObjectError,
     AssertStringContainsError,
     AssertArrayContainsError,
-    AssertObjectContainsError
+    AssertTypeofError
 } = unittest.errors
 
 class AssertionError extends Error {}
@@ -71,13 +71,17 @@ class AssertArrayContainsTests extends unittest.TestCase {
 }
 
 
-class AssertObjectContainsTests extends unittest.TestCase {
-    // testTypeFailure() {
-    //     const r = /container arg must be an instance of object/
-    //     this.assertRaisesRegex(AssertObjectContainsError, r, () => {
-    //         this.assertObjectContains(1, null)
-    //     })
-    // }
+class AssertTypeofTests extends unittest.TestCase {
+    testFailure() {
+        const r = /typeof hello !== function/
+        this.assertRaisesRegex(AssertTypeofError, r, () => {
+            this.assertTypeof('hello', 'function')
+        })
+    }
+
+    testPass() {
+        this.assertTypeof('hello', 'string')
+    }
 }
 
 
@@ -217,7 +221,7 @@ unittest
         AssertInTests,
         AssertStringContainsTests,
         AssertArrayContainsTests,
-        AssertObjectContainsTests
+        AssertTypeofTests
     )
 
 
