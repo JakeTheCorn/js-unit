@@ -1,2 +1,2 @@
 add globbing so this can be run as `node unittest.js --pattern subdir/**/*.test.js`
-
+make unittest an npm module
