@@ -5,8 +5,18 @@ const utils = new Utils()
 main(process.argv)
 
 async function main(_args) {
-    const data = await utils.readfile('./config.json')
+    let data = await utils.readfile('./config.json')
+    const lines = data.split('\n')
+    data = lines.filter(l => {
+        if (/^.*\/\//.test(l)) {
+            return false
+        }
+        return true
+    }).join('')
     const config = JSON.parse(data)
+    if (!/\/$/.test(config.path)) {
+        config.path = config.path + '/'
+    }
     await all(config)
 }
 

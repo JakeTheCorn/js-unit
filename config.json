@@ -1,5 +1,5 @@
 {
-    "path": "./",
+    "path": "./subdir",
     "patterns": [
         ".ut.js",
         ".test.js"
