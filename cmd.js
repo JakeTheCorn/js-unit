@@ -1,16 +1,13 @@
 const Utils = require('./utils')
 const utils = new Utils()
 
-main()
 
-async function main() {
-    await all({
-        path: './',
-        patterns: [
-            '.ut.js',
-            '.test.js'
-        ],
-    })
+main(process.argv)
+
+async function main(_args) {
+    const data = await utils.readfile('./config.json')
+    const config = JSON.parse(data)
+    await all(config)
 }
 
 async function all({ path, patterns }) {

@@ -1,0 +1,7 @@
+{
+    "path": "./",
+    "patterns": [
+        ".ut.js",
+        ".test.js"
+    ]
+}
