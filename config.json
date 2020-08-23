@@ -1,7 +1,10 @@
 {
-    "path": "./subdir",
+    "path": "./",
     "patterns": [
         ".ut.js",
         ".test.js"
-    ]
+    ],
+    "commands": {
+
+    }
 }

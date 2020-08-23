@@ -122,6 +122,55 @@ class TestCase {
             throw new Error(actual + ' !== ' + expected)
     }
 
+    assertObjectEqual(actual, expected) {
+        if (typeof expected !== 'object') {
+            throw new Error('assertObjectEqual expects an object for 2nd (expected) param')
+        }
+        if (typeof actual !== 'object') {
+            throw new Error('assertObjectEqual expects an object for 1st (actual) param')
+        }
+        if (Array.isArray(actual)) {
+            throw new Error('assertObjectEqual expects an object for 1st (actual) param')
+        }
+        if (Array.isArray(expected)) {
+            throw new Error('assertObjectEqual expects an object for 2nd (expected) param')
+        }
+        this.__assertObjectEqual(actual, expected)
+    }
+
+    __assertObjectEqual(actual, expected) {
+        // value equality, object values
+        const a_copy = {...actual}
+        for (let key in expected) {
+            if (actual.hasOwnProperty(key)) {
+                const a_val = actual[key]; const e_val = expected[key];
+                const types = get_types(a_val, e_val)
+                if (types.actual !== types.expected) {
+                    let msg = `types are not equal under key "${key}": ${types.actual} cannot be compared to ${types.expected}`
+                    throw new Error(msg)
+                }
+                if (a_val !== e_val) {
+                    throw new Error(`values are not equal under key "${key}": "${a_val}" !== "${e_val}"`)
+                }
+                continue;
+            }
+            throw new Error(`actual missing ${key}`)
+        }
+
+        function get_types(actual_val, expected_val) {
+            return {
+                actual: typeof actual_val,
+                expected: typeof expected_val
+            }
+        }
+
+        function compare_string_values(actual, expected, key) {
+            if (actual !== expected) {
+                throw new Error(`values are not equal under key "${key}": "${a_val}" !== "${e_val}"`)
+            }
+        }
+    }
+
     assertIsNull(actual) {
         if (actual !== null)
             throw new Error(actual + ' !== null')
