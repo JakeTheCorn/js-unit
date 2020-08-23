@@ -122,7 +122,22 @@ class TestCase {
             throw new Error(actual + ' !== ' + expected)
     }
 
+    assertHasPath(path, container) {
+        if (!container.hasOwnProperty(path)) {
+            throw new Error('path "name" could not be found in object')
+        }
+    }
+
     assertObjectEqual(actual, expected) {
+        /**
+         * write this to do the following... (something like)
+         *   flatten object {ages: [1]} -> {'ages[0]': 1}
+         *   make sure actual has all keys of expected
+         *   make sure actual does not have extra keys
+         *   make sure actual types equal expected
+         *   make sure actual values equal expected
+         *   collect all errors but only report the first
+        */
         if (typeof expected !== 'object') {
             throw new Error('assertObjectEqual expects an object for 2nd (expected) param')
         }
@@ -140,33 +155,41 @@ class TestCase {
 
     __assertObjectEqual(actual, expected) {
         // value equality, object values
-        const a_copy = {...actual}
         for (let key in expected) {
-            if (actual.hasOwnProperty(key)) {
-                const a_val = actual[key]; const e_val = expected[key];
-                const types = get_types(a_val, e_val)
-                if (types.actual !== types.expected) {
-                    let msg = `types are not equal under key "${key}": ${types.actual} cannot be compared to ${types.expected}`
-                    throw new Error(msg)
-                }
-                if (a_val !== e_val) {
-                    throw new Error(`values are not equal under key "${key}": "${a_val}" !== "${e_val}"`)
-                }
-                continue;
+            if (!actual.hasOwnProperty(key)) {
+                throw new Error(`actual missing ${key}`)
             }
-            throw new Error(`actual missing ${key}`)
+            const a_val = actual[key]; const e_val = expected[key];
+            let types = get_types(a_val, e_val)
+            if (types.actual !== types.expected) {
+                throw new Error(`types are not equal under path "${key}": ${types.actual} cannot be compared to ${types.expected}`)
+            }
+            if (types.expected === 'array') {
+                for (let i = 0; i < e_val.length; i++) {
+                    if (a_val[i] === e_val[i]) {
+                        continue
+                    }
+                    types = get_types(a_val[i], e_val[i])
+                    let a_pres = `${a_val[i]}`
+                    let e_pres = `${e_val[i]}`
+                    if (types.expected === 'string') {
+                        a_pres = `"${a_val[i]}"`
+                        e_pres = `"${e_val[i]}"`
+                    }
+                    throw new Error(`values are not equal under path "${key}[${i}]": ${a_pres} !== ${e_pres}`)
+                }
+            }
+            if (a_val !== e_val) {
+                throw new Error(`values are not equal under path "${key}": "${a_val}" !== "${e_val}"`)
+            }
         }
 
         function get_types(actual_val, expected_val) {
+            let a_type = Array.isArray(actual_val) ? 'array' : typeof actual_val
+            let e_type = Array.isArray(expected_val) ? 'array' : typeof expected_val
             return {
-                actual: typeof actual_val,
-                expected: typeof expected_val
-            }
-        }
-
-        function compare_string_values(actual, expected, key) {
-            if (actual !== expected) {
-                throw new Error(`values are not equal under key "${key}": "${a_val}" !== "${e_val}"`)
+                actual: a_type,
+                expected: e_type,
             }
         }
     }
