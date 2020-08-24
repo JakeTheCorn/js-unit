@@ -2,7 +2,7 @@ const unittest = require('./unittest')
 const object_equal = require('./lib/object_equal')
 
 
-class GetObjectReportTests extends unittest.TestCase {
+class ObjectEqualTests extends unittest.TestCase {
     test_returns_null_when_both_are_empty_objects() {
         const err = object_equal({}, {})
         this.assertIsNull(err)
@@ -130,10 +130,17 @@ class GetObjectReportTests extends unittest.TestCase {
         const err = object_equal(a, b)
         this.assertEqual(err, 'unequal values found at "lists.0.1": 2 !== 1')
     }
+
+    test_err_when_arrays_of_unequal_size() {
+        const a = {lists: [[1]]}
+        const b = {lists: [[1, 1]]}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'missing property "lists.0.1"')
+    }
 }
 
 
-unittest.register(GetObjectReportTests)
+unittest.register(ObjectEqualTests)
 
 
 if (require.main === module) {

@@ -1,5 +1,4 @@
 const unittest = require('./unittest')
-
 // test arrays
 
 class AssertObjectEqualTests extends unittest.TestCase {
@@ -32,42 +31,6 @@ class AssertObjectEqualTests extends unittest.TestCase {
         const r = /assertObjectEqual expects an object for 2nd \(expected\) param/
         this.assertRaisesRegex(Error, r, () => {
             this.assertObjectEqual({}, [])
-        })
-    }
-
-    test_it_throws_when_toplevel_string_value_is_unequal() {
-        const r = /values are not equal under path "name": "bill" !== "bob"/
-        this.assertRaisesRegex(Error, r, () => {
-            this.assertObjectEqual({name: 'bill'}, {name: 'bob'})
-        })
-    }
-
-    test_it_throws_when_toplevel_values_of_differing_type() {
-        const r = /types are not equal under path "name": number cannot be compared to string/
-        this.assertRaisesRegex(Error, r, () => {
-            this.assertObjectEqual({name: 1}, {name: 'bob'})
-        })
-    }
-
-    test_it_throws_when_toplevel_arrays_contain_unequal_strings() {
-        const r = /values are not equal under path "names\[0\]": "bill" !== "bob"/
-        this.assertRaisesRegex(Error, r, () => {
-            const actual = {
-                names: ["bill"]
-            }
-            const expected = {
-                names: ["bob"]
-            }
-            this.assertObjectEqual(actual, expected)
-        })
-    }
-
-    test_it_throws_when_toplevel_arrays_contain_unequal_numbers() {
-        const r = /values are not equal under path "ages\[0\]": 7 !== 42/
-        this.assertRaisesRegex(Error, r, () => {
-            const actual = { ages: [7] }
-            const expected = { ages: [42] }
-            this.assertObjectEqual(actual, expected)
         })
     }
 

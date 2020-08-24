@@ -1,3 +1,5 @@
+const object_equal = require("./lib/object_equal")
+
 class FailCalledError extends Error {}
 class FailCalledWithoutReason extends Error {}
 
@@ -135,6 +137,7 @@ class TestCase {
     }
 
     assertObjectEqual(actual, expected) {
+
         /**
          * write this to do the following... (something like)
          *   flatten object {ages: [1]} -> {'ages[0]': 1}
@@ -156,47 +159,9 @@ class TestCase {
         if (Array.isArray(expected)) {
             throw new Error('assertObjectEqual expects an object for 2nd (expected) param')
         }
-        this.__assertObjectEqual(actual, expected)
-    }
-
-    __assertObjectEqual(actual, expected) {
-        // value equality, object values
-        for (let key in expected) {
-            if (!actual.hasOwnProperty(key)) {
-                throw new Error(`actual missing ${key}`)
-            }
-            const a_val = actual[key]; const e_val = expected[key];
-            let types = get_types(a_val, e_val)
-            if (types.actual !== types.expected) {
-                throw new Error(`types are not equal under path "${key}": ${types.actual} cannot be compared to ${types.expected}`)
-            }
-            if (types.expected === 'array') {
-                for (let i = 0; i < e_val.length; i++) {
-                    if (a_val[i] === e_val[i]) {
-                        continue
-                    }
-                    types = get_types(a_val[i], e_val[i])
-                    let a_pres = `${a_val[i]}`
-                    let e_pres = `${e_val[i]}`
-                    if (types.expected === 'string') {
-                        a_pres = `"${a_val[i]}"`
-                        e_pres = `"${e_val[i]}"`
-                    }
-                    throw new Error(`values are not equal under path "${key}[${i}]": ${a_pres} !== ${e_pres}`)
-                }
-            }
-            if (a_val !== e_val) {
-                throw new Error(`values are not equal under path "${key}": "${a_val}" !== "${e_val}"`)
-            }
-        }
-
-        function get_types(actual_val, expected_val) {
-            let a_type = Array.isArray(actual_val) ? 'array' : typeof actual_val
-            let e_type = Array.isArray(expected_val) ? 'array' : typeof expected_val
-            return {
-                actual: a_type,
-                expected: e_type,
-            }
+        const err = object_equal(actual, expected)
+        if (err) {
+            throw new Error(err)
         }
     }
 
