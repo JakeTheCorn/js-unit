@@ -1,17 +1,46 @@
 const unittest = require('./unittest')
 
-// _.isEqual()
-function object_equal(a, b) {
+function object_equal(a, b, parent_paths=[]) {
     const a_copy = {...a}
+    const next_a = {}
+    const next_b = {}
+    // evaluate primitives
     for (let prop in b) {
         if (!a_copy.hasOwnProperty(prop)) {
             return `missing property "${prop}"`
         }
-        if (a_copy[prop] === b[prop]) {
-            delete a_copy[prop]
-            continue
+        const types = { a: to_type(a_copy[prop]), b: to_type(b[prop]) }
+        if (types.a !== types.b) {
+            return `unequal types found at "${[...parent_paths, prop].join('.')}"`
         }
+        const type = types.a
+        if (type === 'object') {
+            next_a[prop] = a_copy[prop]
+            next_b[prop] = b[prop]
+            delete a_copy[prop]; continue
+        }
+
+        if (a_copy[prop] !== b[prop]) {
+            let extension = `${a_copy[prop]} !== ${b[prop]}`
+            if (type === 'string') {
+                extension = `"${a_copy[prop]}" !== "${b[prop]}"`
+            }
+            return `unequal values found at "${[...parent_paths, prop].join('.')}": ` + extension
+        }
+
+        delete a_copy[prop]
     }
+    // evaluate complex types
+    if (Object.keys(next_b).length > 0) {
+        for (let key in next_b) {
+            const err = object_equal(next_a[key], next_b[key], [...parent_paths, key])
+            if (err) {
+                return err
+            }
+        }
+
+    }
+
     const a_keys = Object.keys(a_copy)
     if (a_keys.length > 0) {
         return 'extra properties found: ' + a_keys.join(', ')
@@ -19,19 +48,10 @@ function object_equal(a, b) {
     return null
 }
 
-/**
- * I'm trying for the wrong thing here...
- *   I should really be shooting for a function that gives me something like List[Tuple[Path, Value]]
- *   [
- *     ['orig_key   synthetic_path', 'value'],
- *     ['people [0]. age    array  [0].age', 45],
- *     ['people[0] array  [0].name'],
- *     ['people    array  [0].name', 'bob'],
- *     ['location  string ""', 'NYC']
- *   ]
- *
- *   this way there are no negative consequences for a name clash.
- */
+function to_type(a) {
+    return typeof a
+}
+
 
 class GetObjectReportTests extends unittest.TestCase {
     test_returns_null_when_both_are_empty_objects() {
@@ -54,23 +74,113 @@ class GetObjectReportTests extends unittest.TestCase {
         this.assertEqual(err, 'extra properties found: age, gender')
     }
 
+    test_err_when_values_are_not_of_same_type() {
+        const err = object_equal({age: 7}, {age: 'bob'})
+        this.assertEqual(err, 'unequal types found at "age"')
+    }
 
-    // test_array() {
-    //     const res = flattenObject({names: ['bob']})
-    //     this.assertEqual(res['names[0]'], 'bob')
-    //     this.assertEqual(Object.keys(res).length, 1)
+    test_err_string_when_value_mismatch_found() {
+        const err = object_equal({name: 7}, {name: 8})
+        this.assertEqual(err, 'unequal values found at "name": 7 !== 8')
+    }
+
+    test_null_when_nested_objects_match() {
+        const b = {person: {name: 'bob', age: 45}}
+        const a = {person: {...b.person}}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
+
+    test_null_when_deep_nested_objects_match() {
+        const a = {person: {name: 'bob', age: 45, address: {street: 'Penn Ave'}}}
+        const b = {person: {name: 'bob', age: 45, address: {street: 'Penn Ave'}}}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
+
+    test_string_has_path_when_nested_object_contains_unequal_types() {
+        const b = {person: {name: 'bob'}}
+        const a = {person: {name: 7}}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal types found at "person.name"')
+    }
+
+    test_string_has_path_when_nested_object_contains_unequal_values() {
+        const a = {person: {name: 'bill'}}
+        const b = {person: {name: 'bob'}}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal values found at "person.name": "bill" !== "bob"')
+    }
+
+    test_it_returns_null_when_empty_arrays_match() {
+        const a = {ages: []}
+        const b = {ages: []}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
+
+    test_err_path_when_array_type_mismatch_found() {
+        const a = {ages: [1]}
+        const b = {ages: ['1']}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal types found at "ages.0"')
+    }
+
+    test_it_returns_null_when_len1_arrays_match() {
+        const a = {ages: [1]}
+        const b = {ages: [1]}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
+
+    // test_it_returns_null_when_len2_arrays_match() {
+    //     const a = {ages: [1, 2]}
+    //     const b = {ages: [1, 2]}
+    //     const err = object_equal(a, b)
+    //     this.assertIsNull(err)
     // }
 
-    // test_empty_array() {
-    //     const res = flattenObject({
-    //         people: []})
-    //     this.assertEqual(res['people[]'], '____EMPTY_')
+    // test_it_returns_null_when_2_len1_arrays_match() {
+    //     const a = {ages: [1], names: ['bill']}
+    //     const b = {ages: [1], names: ['bill']}
+    //     const err = object_equal(a, b)
+    //     this.assertIsNull(err)
     // }
 
-    // test_array_with_object() {
-    //     const res = flattenObject({people: [{age: 1}]})
-    //     this.assertEqual(res['people[0].age'], 1)
+    // test_it_returns_null_with_nested_empty_arrays() {
+    //     const a = {lists: [[]]}
+    //     const b = {lists: [[]]}
+    //     const err = object_equal(a, b)
+    //     this.assertIsNull(err)
     // }
+
+    test_it_returns_null_with_matching_nested_arrays() {
+        const a = {lists: [[1]]}
+        const b = {lists: [[1]]}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
+
+    test_err_path_when_nested_arrays_values_do_not_match() {
+        const a = {lists: [[1]]}
+        const b = {lists: [[2]]}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal values found at "lists.0.0": 1 !== 2')
+    }
+
+    test_err_path_when_nested_arrays_types_do_not_match() {
+        const a = {lists: [[1]]}
+        const b = {lists: [['1']]}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal types found at "lists.0.0"')
+    }
+
+    test_err_path_when_nested_arrays_2nd_values_do_not_match() {
+        const a = {lists: [[1, 2]]}
+        const b = {lists: [[1, 1]]}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal values found at "lists.0.1": 2 !== 1')
+    }
 }
 
 
