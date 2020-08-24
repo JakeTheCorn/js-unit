@@ -1,56 +1,5 @@
 const unittest = require('./unittest')
-
-function object_equal(a, b, parent_paths=[]) {
-    const a_copy = {...a}
-    const next_a = {}
-    const next_b = {}
-    // evaluate primitives
-    for (let prop in b) {
-        if (!a_copy.hasOwnProperty(prop)) {
-            return `missing property "${prop}"`
-        }
-        const types = { a: to_type(a_copy[prop]), b: to_type(b[prop]) }
-        if (types.a !== types.b) {
-            return `unequal types found at "${[...parent_paths, prop].join('.')}"`
-        }
-        const type = types.a
-        if (type === 'object') {
-            next_a[prop] = a_copy[prop]
-            next_b[prop] = b[prop]
-            delete a_copy[prop]; continue
-        }
-
-        if (a_copy[prop] !== b[prop]) {
-            let extension = `${a_copy[prop]} !== ${b[prop]}`
-            if (type === 'string') {
-                extension = `"${a_copy[prop]}" !== "${b[prop]}"`
-            }
-            return `unequal values found at "${[...parent_paths, prop].join('.')}": ` + extension
-        }
-
-        delete a_copy[prop]
-    }
-    // evaluate complex types
-    if (Object.keys(next_b).length > 0) {
-        for (let key in next_b) {
-            const err = object_equal(next_a[key], next_b[key], [...parent_paths, key])
-            if (err) {
-                return err
-            }
-        }
-
-    }
-
-    const a_keys = Object.keys(a_copy)
-    if (a_keys.length > 0) {
-        return 'extra properties found: ' + a_keys.join(', ')
-    }
-    return null
-}
-
-function to_type(a) {
-    return typeof a
-}
+const object_equal = require('./lib/object_equal')
 
 
 class GetObjectReportTests extends unittest.TestCase {
@@ -133,26 +82,26 @@ class GetObjectReportTests extends unittest.TestCase {
         this.assertIsNull(err)
     }
 
-    // test_it_returns_null_when_len2_arrays_match() {
-    //     const a = {ages: [1, 2]}
-    //     const b = {ages: [1, 2]}
-    //     const err = object_equal(a, b)
-    //     this.assertIsNull(err)
-    // }
+    test_it_returns_null_when_len2_arrays_match() {
+        const a = {ages: [1, 2]}
+        const b = {ages: [1, 2]}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
 
-    // test_it_returns_null_when_2_len1_arrays_match() {
-    //     const a = {ages: [1], names: ['bill']}
-    //     const b = {ages: [1], names: ['bill']}
-    //     const err = object_equal(a, b)
-    //     this.assertIsNull(err)
-    // }
+    test_it_returns_null_when_2_len1_arrays_match() {
+        const a = {ages: [1], names: ['bill']}
+        const b = {ages: [1], names: ['bill']}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
 
-    // test_it_returns_null_with_nested_empty_arrays() {
-    //     const a = {lists: [[]]}
-    //     const b = {lists: [[]]}
-    //     const err = object_equal(a, b)
-    //     this.assertIsNull(err)
-    // }
+    test_it_returns_null_with_nested_empty_arrays() {
+        const a = {lists: [[]]}
+        const b = {lists: [[]]}
+        const err = object_equal(a, b)
+        this.assertIsNull(err)
+    }
 
     test_it_returns_null_with_matching_nested_arrays() {
         const a = {lists: [[1]]}
