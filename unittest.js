@@ -122,6 +122,12 @@ class TestCase {
             throw new Error(actual + ' !== ' + expected)
     }
 
+    assertIsArray(value) {
+        if (!Array.isArray(value)) {
+            throw new Error('value is not an array')
+        }
+    }
+
     assertHasPath(path, container) {
         if (!container.hasOwnProperty(path)) {
             throw new Error('path "name" could not be found in object')
