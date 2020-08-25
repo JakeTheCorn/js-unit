@@ -137,6 +137,17 @@ class ObjectEqualTests extends unittest.TestCase {
         const err = object_equal(a, b)
         this.assertEqual(err, 'missing property "lists.0.1"')
     }
+
+    test_very_deep() {
+        const a = {lists: [[{}, {person: {name: 'bill'}}]]}
+        const b = {lists: [[{}, {person: {name: 'bob'}}]]}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal values found at "lists.0.1.person.name": "bill" !== "bob"')
+    }
+
+    _test_dates() {}
+
+    _test_things_that_implement_equals() {}
 }
 
 

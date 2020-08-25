@@ -8,6 +8,7 @@ class AssertArrayContainsError extends Error {}
 class AssertObjectContainsError extends Error {}
 class AssertTypeofError extends Error {}
 class AssertArrayEqualsError extends Error {}
+class DidNotRaiseError extends Error {}
 
 
 class TestCase {
@@ -97,7 +98,6 @@ class TestCase {
         }
     }
 
-
     assertStringContains(member, container) {
         let m_type = typeof member
         let c_type = typeof container
@@ -137,16 +137,6 @@ class TestCase {
     }
 
     assertObjectEqual(actual, expected) {
-
-        /**
-         * write this to do the following... (something like)
-         *   flatten object {ages: [1]} -> {'ages[0]': 1}
-         *   make sure actual has all keys of expected
-         *   make sure actual does not have extra keys
-         *   make sure actual types equal expected
-         *   make sure actual values equal expected
-         *   collect all errors but only report the first
-        */
         if (typeof expected !== 'object') {
             throw new Error('assertObjectEqual expects an object for 2nd (expected) param')
         }
@@ -200,8 +190,6 @@ class TestCase {
     }
 
     assertRaisesRegex(klass, regex, throwFunc) {
-        class DidNotRaiseError extends Error {}
-
         try {
             throwFunc()
             throw new DidNotRaiseError('assertRaisesRegex fails... function did now throw')
