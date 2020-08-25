@@ -1,5 +1,4 @@
-const unittest = require('./unittest')
-// test arrays
+const unittest = require('../unittest')
 
 class AssertObjectEqualTests extends unittest.TestCase {
     test_empty_object() {
@@ -33,15 +32,6 @@ class AssertObjectEqualTests extends unittest.TestCase {
             this.assertObjectEqual({}, [])
         })
     }
-
-    // test_it_throws_when_nested_arrays_have_unequal_values() {
-    //     const r = /values are not equal under path "lists\[0\]\[0\]": 1 !== 2/
-    //     this.assertRaisesRegex(Error, r, () => {
-    //         const actual = { lists: [[1]] }
-    //         const expected = { lists: [[2]] }
-    //         this.assertObjectEqual(actual, expected)
-    //     })
-    // }
 }
 
 unittest.register(AssertObjectEqualTests)

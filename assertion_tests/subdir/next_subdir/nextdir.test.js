@@ -1,4 +1,4 @@
-const unittest = require('../../unittest')
+const unittest = require('../../../unittest')
 
 class SubdirTests extends unittest.TestCase {
     test() {
@@ -6,10 +6,7 @@ class SubdirTests extends unittest.TestCase {
     }
 }
 
-unittest
-  .register(
-      SubdirTests
-  )
+unittest.register(SubdirTests)
 
 if (require.main === module) {
     unittest.main()

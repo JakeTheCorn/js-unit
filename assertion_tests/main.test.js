@@ -1,4 +1,4 @@
-const unittest = require('./unittest')
+const unittest = require('../unittest')
 const {
     FailCalledError,
     FailCalledWithoutReason,

@@ -1,5 +1,5 @@
-const unittest = require('./unittest')
-const object_equal = require('./lib/object_equal')
+const unittest = require('../unittest')
+const object_equal = require('../lib/object_equal')
 
 
 class ObjectEqualTests extends unittest.TestCase {

@@ -1,4 +1,4 @@
-const Utils = require('./utils')
+const Utils = require('./lib/utils')
 const utils = new Utils()
 
 

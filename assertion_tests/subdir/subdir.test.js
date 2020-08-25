@@ -1,8 +1,12 @@
-const unittest = require('../unittest')
+const unittest = require('../../unittest')
 
 class SubdirTests extends unittest.TestCase {
     test() {
-        this.assertEqual(4, 4)
+        this.assertEqual(1, 1)
+    }
+
+    _testSkip() {
+
     }
 }
 
