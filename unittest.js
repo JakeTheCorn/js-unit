@@ -222,7 +222,7 @@ class TestCase {
         }
     }
 
-    assertDoesNotThrow(klass, func) {
+    assertDoesNotThrowInstanceOf(klass, func) {
 
         try {
             if (typeof func !== 'function') {
