@@ -1,11 +1,11 @@
 const unittest = require('../unittest')
 
 class IsNullTests extends unittest.TestCase {
-    testPass() {
+    test_pass() {
         this.assertIsNull(null)
     }
 
-    testFail() {
+    test_fail() {
         this.assertRaisesRegex(Error, /"HEY" is not null/, () => {
             this.assertIsNull('HEY')
         })

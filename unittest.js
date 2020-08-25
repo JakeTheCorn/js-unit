@@ -222,6 +222,17 @@ class TestCase {
         }
     }
 
+    assertDoesNotThrow(func) {
+        try {
+            if (typeof func !== 'function') {
+                throw new UnittestError('function is not callable')
+            }
+            func()
+        } catch (error) {
+            throw new AssertDoesNotThrowError('should never throw')
+        }
+    }
+
     assertDoesNotThrowInstanceOf(klass, func) {
         try {
             if (typeof func !== 'function') {

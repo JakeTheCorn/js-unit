@@ -9,8 +9,9 @@ class AssertDatesEqualTests extends unittest.TestCase {
         })
     }
 
-    test_it_does_not_throw_UnittestError_when_called_with_dates() {
-        this.assertDoesNotThrowInstanceOf(UnittestError, () => {
+    test_it_does_not_throw_when_called_with_dates() {
+        // TypeError?
+        this.assertDoesNotThrow(() => {
             const d = new Date()
             this.assertDatesEqual(d, d)
         })
