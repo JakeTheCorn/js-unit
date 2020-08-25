@@ -1,11 +1,11 @@
 const unittest = require("../unittest")
 
 class IsFalseTests extends unittest.TestCase {
-    testPass() {
+    test_pass() {
         this.assertIsFalse(false)
     }
 
-    testFail() {
+    test_fail() {
         this.assertRaisesRegex(Error, /true !== false/, () => {
             this.assertIsFalse(true)
         })

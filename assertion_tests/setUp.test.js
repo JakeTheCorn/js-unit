@@ -5,21 +5,21 @@ class SetUpAssignmentTests extends unittest.TestCase {
         this.age = 6
     }
 
-    testAssignment1() {
+    test_assignment_1() {
         this.age = 7
         this.assertEqual(this.age, 7)
     }
 
-    testAccess1() {
+    test_access1() {
         this.assertEqual(this.age, 6)
     }
 
-    testAssignment2() {
+    test_assignment2() {
         this.age = 8
         this.assertEqual(this.age, 8)
     }
 
-    testAccess2() {
+    test_access2() {
         this.assertEqual(this.age, 6)
     }
 }

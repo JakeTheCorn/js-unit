@@ -2,14 +2,14 @@ const unittest = require("../unittest")
 const { AssertTypeofError } = unittest.errors
 
 class AssertTypeofTests extends unittest.TestCase {
-    testFailure() {
+    test_failure() {
         const r = /typeof hello !== function/
         this.assertRaisesRegex(AssertTypeofError, r, () => {
             this.assertTypeof('hello', 'function')
         })
     }
 
-    testPass() {
+    test_pass() {
         this.assertTypeof('hello', 'string')
     }
 }

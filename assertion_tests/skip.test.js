@@ -1,7 +1,7 @@
 const unittest = require('../unittest')
 
 class SkipTests extends unittest.TestCase {
-    _testWithLeadingUnderscore() {
+    _test_with_leading_underscore() {
         this.assertEqual('THIS SHOULD NOT RUN', true)
     }
 }

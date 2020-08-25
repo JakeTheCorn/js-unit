@@ -2,21 +2,21 @@ const unittest = require("../unittest")
 const { AssertArrayEqualsError } = unittest.errors
 
 class AssertArrayEqualsTests extends unittest.TestCase {
-    testTypeFailure() {
+    test_type_failure() {
         const r = /assertArrayEquals takes two array arguments./
         this.assertRaisesRegex(AssertArrayEqualsError, r, () => {
             this.assertArrayEquals(null, undefined)
         })
     }
 
-    testFailure() {
+    test_failure() {
         const r = /arrays not equal. First differing element found at index 0/
         this.assertRaisesRegex(AssertArrayEqualsError, r, () => {
             this.assertArrayEquals([1], [2])
         })
     }
 
-    testPass() {
+    test_pass() {
         this.assertArrayEquals([1], [1])
     }
 }

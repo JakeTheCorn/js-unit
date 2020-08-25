@@ -1,7 +1,7 @@
 const unittest = require("../unittest")
 
 class RaisesRegexTests extends unittest.TestCase {
-    testPass() {
+    test_pass() {
         class Err extends Error {}
 
         this.assertRaisesRegex(Err, /Hello World/, () => {
