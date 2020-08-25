@@ -223,7 +223,6 @@ class TestCase {
     }
 
     assertDoesNotThrowInstanceOf(klass, func) {
-
         try {
             if (typeof func !== 'function') {
                 throw new AssertDoesNotThrowError('function is not callable')
@@ -233,6 +232,12 @@ class TestCase {
             if (error instanceof klass) {
                 throw new AssertDoesNotThrowError(klass.name + ' was thrown unexpectedly')
             }
+        }
+    }
+
+    assertIsNotNull(value) {
+        if (value === null) {
+            throw new UnittestError('assertIsNotNull called with null')
         }
     }
 }
