@@ -158,8 +158,10 @@ class TestCase {
     }
 
     assertIsNull(actual) {
-        if (actual !== null)
-            throw new Error(actual + ' !== null')
+        if (actual !== null) {
+            let formatted_actual = typeof actual === 'string' ? `"${actual}"` : actual
+            throw new Error(formatted_actual + ' is not null')
+        }
     }
 
     assertIsTrue(actual) {
@@ -218,6 +220,15 @@ class unittest {
             unittest.cases.push(c)
         })
         return unittest
+    }
+
+    static run_if_main(module) {
+        if (!module) {
+            throw new UnittestError('run_if_main must receive valid "module" argument')
+        }
+        if (require.main === module) {
+            unittest.main()
+        }
     }
 
     static main() {
