@@ -12,5 +12,5 @@ class IsNullTests extends unittest.TestCase {
     }
 }
 
-unittest.register(IsNullTests)
+unittest.register(IsNullTests).run_if_main(module)
 

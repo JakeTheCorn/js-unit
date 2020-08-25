@@ -1,6 +1,6 @@
 const unittest = require('../../unittest')
 
-class SubdirTests extends unittest.TestCase {
+class SubDirTests extends unittest.TestCase {
     test() {
         this.assertEqual(1, 1)
     }
@@ -10,11 +10,4 @@ class SubdirTests extends unittest.TestCase {
     }
 }
 
-unittest
-  .register(
-      SubdirTests
-  )
-
-if (require.main === module) {
-    unittest.main()
-}
+unittest.register(SubDirTests).run_if_main(module)

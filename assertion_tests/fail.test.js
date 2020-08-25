@@ -28,6 +28,4 @@ class FailTests extends unittest.TestCase {
 }
 
 
-unittest
-  .register(FailTests)
-  .run_if_main(module)
+unittest.register(FailTests).run_if_main(module)

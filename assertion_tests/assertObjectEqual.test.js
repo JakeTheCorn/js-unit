@@ -34,8 +34,4 @@ class AssertObjectEqualTests extends unittest.TestCase {
     }
 }
 
-unittest.register(AssertObjectEqualTests)
-
-if (require.main === module) {
-    unittest.main()
-}
+unittest.register(AssertObjectEqualTests).run_if_main(module)
