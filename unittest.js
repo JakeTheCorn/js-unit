@@ -1,14 +1,16 @@
 const object_equal = require("./lib/object_equal")
 
-class FailCalledError extends Error {}
-class FailCalledWithoutReason extends Error {}
+class UnittestError extends Error {}
 
-class AssertStringContainsError extends Error {}
-class AssertArrayContainsError extends Error {}
-class AssertObjectContainsError extends Error {}
-class AssertTypeofError extends Error {}
-class AssertArrayEqualsError extends Error {}
-class DidNotRaiseError extends Error {}
+class FailCalledError extends UnittestError {}
+class FailCalledWithoutReason extends UnittestError {}
+
+class AssertStringContainsError extends UnittestError {}
+class AssertArrayContainsError extends UnittestError {}
+class AssertObjectContainsError extends UnittestError {}
+class AssertTypeofError extends UnittestError {}
+class AssertArrayEqualsError extends UnittestError {}
+class DidNotRaiseError extends UnittestError {}
 
 
 class TestCase {
@@ -121,18 +123,18 @@ class TestCase {
 
     assertEqual(actual, expected) {
         if (actual !== expected)
-            throw new Error(actual + ' !== ' + expected)
+            throw new UnittestError(actual + ' !== ' + expected)
     }
 
     assertIsArray(value) {
         if (!Array.isArray(value)) {
-            throw new Error('value is not an array')
+            throw new UnittestError('value is not an array')
         }
     }
 
     assertHasPath(path, container) {
         if (!container.hasOwnProperty(path)) {
-            throw new Error('path "name" could not be found in object')
+            throw new UnittestError('path "name" could not be found in object')
         }
     }
 
