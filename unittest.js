@@ -1,6 +1,7 @@
 const object_equal = require("./lib/object_equal")
 
 class UnittestError extends Error {}
+class AssertDoesNotThrowError extends UnittestError {}
 
 class FailCalledError extends UnittestError {}
 class FailCalledWithoutReason extends UnittestError {}
@@ -122,8 +123,11 @@ class TestCase {
     }
 
     assertEqual(actual, expected) {
-        if (actual !== expected)
-            throw new UnittestError(actual + ' !== ' + expected)
+        if (actual !== expected) {
+            const formatted_actual = typeof actual === 'string' ? `"${actual}"` : actual
+            const formatted_expected = typeof expected === 'string' ? `"${expected}"` : expected
+            throw new UnittestError(formatted_actual + ' !== ' + formatted_expected)
+        }
     }
 
     assertIsArray(value) {
@@ -209,6 +213,28 @@ class TestCase {
             }
         }
     }
+
+    assertDatesEqual(actual, expected) {
+        const actual_is_date = actual instanceof Date
+        const expected_is_date = expected instanceof Date
+        if (!actual_is_date || !expected_is_date) {
+            throw new UnittestError('Should be called with dates')
+        }
+    }
+
+    assertDoesNotThrow(klass, func) {
+
+        try {
+            if (typeof func !== 'function') {
+                throw new AssertDoesNotThrowError('function is not callable')
+            }
+            func()
+        } catch (error) {
+            if (error instanceof klass) {
+                throw new AssertDoesNotThrowError(klass.name + ' was thrown unexpectedly')
+            }
+        }
+    }
 }
 
 class unittest {
@@ -286,6 +312,7 @@ ${timingMessage}
 }
 
 unittest.errors = {
+    UnittestError,
     FailCalledError,
     FailCalledWithoutReason,
     AssertStringContainsError,

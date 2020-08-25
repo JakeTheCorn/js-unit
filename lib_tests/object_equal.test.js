@@ -139,11 +139,13 @@ class ObjectEqualTests extends unittest.TestCase {
     }
 
     test_very_deep() {
-        const a = {lists: [[{}, {person: {name: 'bill'}}]]}
-        const b = {lists: [[{}, {person: {name: 'bob'}}]]}
+        const a = {lists: [[{}, {person: {addresses: [{}, {street: '1500 Main'}]}}]]}
+        const b = {lists: [[{}, {person: {addresses: [{}, {street: '1600 Penn'}]}}]]}
         const err = object_equal(a, b)
-        this.assertEqual(err, 'unequal values found at "lists.0.1.person.name": "bill" !== "bob"')
+        this.assertEqual(err, 'unequal values found at "lists.0.1.person.addresses.1.street": "1500 Main" !== "1600 Penn"')
     }
+
+    _test_with_dots_in_path_names() {}
 
     _test_dates() {}
 
@@ -151,9 +153,4 @@ class ObjectEqualTests extends unittest.TestCase {
 }
 
 
-unittest.register(ObjectEqualTests)
-
-
-if (require.main === module) {
-    unittest.main()
-}
+unittest.register(ObjectEqualTests).run_if_main(module)
