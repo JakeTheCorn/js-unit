@@ -2,7 +2,7 @@ const unittest = require("../unittest")
 const { UnittestError } = unittest.errors
 
 
-class AssertLengthEqualTests extends unittest.TestCase {
+class AssertLessTests extends unittest.TestCase {
     test_type_error() {
         const r = /assertLess must be called with numbers/
         this.assertRaisesRegex(UnittestError, r, () => {
@@ -29,4 +29,4 @@ class AssertLengthEqualTests extends unittest.TestCase {
     }
 }
 
-unittest.register(AssertLengthEqualTests).run_if_main(module)
+unittest.register(AssertLessTests).run_if_main(module)

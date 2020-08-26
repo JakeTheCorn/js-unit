@@ -263,6 +263,18 @@ class TestCase {
             throw new UnittestError(actual + ' is not less than ' + expected + `. ${actual} === ${expected}`)
         }
     }
+
+    assertGreater(actual, expected) {
+        if (typeof actual !== 'number' || typeof expected !== 'number') {
+            throw new UnittestError('assertGreater must be called with numbers')
+        }
+        if (actual < expected) {
+            throw new UnittestError(`actual is not greater than expected. ${actual} < ${expected}`)
+        }
+        if (actual === expected) {
+            throw new UnittestError(`actual is not greater than expected. ${actual} === ${expected}`)
+        }
+    }
 }
 
 class unittest {
