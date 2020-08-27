@@ -14,6 +14,5 @@ class AssertIsNotNullTests extends unittest.TestCase {
     }
 }
 
-// assertLengthEqual()
 
 unittest.register(AssertIsNotNullTests).run_if_main(module)

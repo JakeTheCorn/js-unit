@@ -6,8 +6,8 @@ class IsFalseTests extends unittest.TestCase {
     }
 
     test_fail() {
-        this.assertRaisesRegex(Error, /true !== false/, () => {
-            this.assertIsFalse(true)
+        this.assertRaisesRegex(Error, /"false" !== false/, () => {
+            this.assertIsFalse('false')
         })
     }
 }

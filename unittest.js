@@ -84,7 +84,8 @@ class TestCase {
 
     assertTypeof(subject, type) {
         if (typeof subject !== type) {
-            throw new AssertTypeofError(`typeof ${subject} !== ${type}`)
+            const formatted = typeof subject === 'string' ? `"${subject}"` : subject
+            throw new AssertTypeofError(`typeof ${formatted} !== ${type}`)
         }
     }
 
@@ -169,13 +170,17 @@ class TestCase {
     }
 
     assertIsTrue(actual) {
-        if (actual !== true)
-            throw new Error(actual + ' !== true')
+        if (actual !== true) {
+            const formatted = typeof actual === 'string' ? `"${actual}"` : actual
+            throw new Error(formatted + ' !== true')
+        }
     }
 
     assertIsFalse(actual) {
-        if (actual !== false)
-            throw new Error(actual + ' !== false')
+        if (actual !== false) {
+            const formatted = typeof actual === 'string' ? `"${actual}"` : actual
+            throw new Error(formatted + ' !== false')
+        }
     }
 
     assertRaises(errType, throwFunc) {

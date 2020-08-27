@@ -6,7 +6,7 @@ class IsTrueTests extends unittest.TestCase {
     }
 
     test_fail() {
-        this.assertRaisesRegex(Error, /HEY !== true/, () => {
+        this.assertRaisesRegex(Error, /"HEY" !== true/, () => {
             this.assertIsTrue('HEY')
         })
     }

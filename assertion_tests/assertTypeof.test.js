@@ -3,7 +3,7 @@ const { AssertTypeofError } = unittest.errors
 
 class AssertTypeofTests extends unittest.TestCase {
     test_failure() {
-        const r = /typeof hello !== function/
+        const r = /typeof "hello" !== function/
         this.assertRaisesRegex(AssertTypeofError, r, () => {
             this.assertTypeof('hello', 'function')
         })
