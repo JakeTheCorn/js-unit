@@ -1,33 +1,34 @@
-// const unittest = require("../unittest")
-// const { UnittestError } = unittest.errors
+const unittest = require("../unittest")
+const { UnittestError } = unittest.errors
 
 
-// class AssertLessTests extends unittest.TestCase {
-//     test_type_error() {
-//         const r = /assertLess must be called with numbers/
-//         this.assertRaisesRegex(UnittestError, r, () => {
-//             this.assertLess('', null)
-//         })
-//     }
+class AssertRuntimeTests extends unittest.TestCase {
+    test_too_long() {
+        const r = /function runtime \(\d+ms\) exceeded specified limit \(1ms\)/
+        this.assertRaisesRegex(UnittestError, r, () => {
+            this.assertRuntimeLimit(1, () => {
+                sleep(2)
+            })
+        })
+    }
 
-//     test_pass() {
-//         this.assertLess(4, 5)
-//     }
+    test_pass() {
+        this.assertRuntimeLimit(100, noop)
+    }
+}
 
-//     test_it_fails_when_numbers_are_equal() {
-//         const r = /3 is not less than 3. 3 === 3/
-//         this.assertRaisesRegex(UnittestError, r, () => {
-//             this.assertLess(3, 3)
-//         })
-//     }
+function noop() {}
 
-//     test_it_fails_when_number_is_greater_than() {
-//         const r = /4 is not less than 3. 4 > 3/
-//         this.assertRaisesRegex(UnittestError, r, () => {
-//             this.assertLess(4, 3)
-//         })
-//     }
-// }
+// todo: print runtime of each test
+
+// todo: move to utils
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+}
 
 
-// unittest.register(AssertLessTests).run_if_main(module)
+unittest.register(AssertRuntimeTests).run_if_main(module)

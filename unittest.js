@@ -219,6 +219,23 @@ class TestCase {
         }
     }
 
+    assertRuntimeLimit(ms_limit, func) {
+        const start = process.hrtime()
+        try {
+            func()
+        } catch (error) {
+            console.error(error)
+            // do something
+        }
+        const [_end_secs, end_nano_secs] = process.hrtime(start)
+        const ONE_MILLION = 1000000
+        const func_ms = end_nano_secs / ONE_MILLION
+        // what if message says runtime 400ms exceeds 400ms?
+        if (func_ms > ms_limit) {
+            throw new UnittestError(`function runtime (${Math.trunc(func_ms)}ms) exceeded specified limit (${ms_limit}ms)`)
+        }
+    }
+
     assertDatesEqual(actual, expected) {
         const actual_is_date = actual instanceof Date
         const expected_is_date = expected instanceof Date
