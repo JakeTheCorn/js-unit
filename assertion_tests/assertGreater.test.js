@@ -15,14 +15,14 @@ class AssertGreaterTests extends unittest.TestCase {
     }
 
     test_it_fails_when_numbers_are_equal() {
-        const r = /actual is not greater than expected. 3 === 3/
+        const r = /3 is not greater than 3. actual === expected/
         this.assertRaisesRegex(UnittestError, r, () => {
             this.assertGreater(3, 3)
         })
     }
 
     test_it_fails_when_number_is_less_than() {
-        const r = /actual is not greater than expected. 3 < 4/
+        const r = /3 is not greater than 4. actual < expected/
         this.assertRaisesRegex(UnittestError, r, () => {
             this.assertGreater(3, 4)
         })

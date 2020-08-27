@@ -15,14 +15,14 @@ class AssertLessTests extends unittest.TestCase {
     }
 
     test_it_fails_when_numbers_are_equal() {
-        const r = /3 is not less than 3. 3 === 3/
+        const r = /3 is not less than 3. actual === expected/
         this.assertRaisesRegex(UnittestError, r, () => {
             this.assertLess(3, 3)
         })
     }
 
     test_it_fails_when_number_is_greater_than() {
-        const r = /4 is not less than 3. 4 > 3/
+        const r = /4 is not less than 3. actual > expected/
         this.assertRaisesRegex(UnittestError, r, () => {
             this.assertLess(4, 3)
         })

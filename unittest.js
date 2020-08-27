@@ -257,10 +257,10 @@ class TestCase {
             throw new UnittestError('assertLess must be called with numbers')
         }
         if (actual > expected) {
-            throw new UnittestError(actual + ' is not less than ' + expected + `. ${actual} > ${expected}`)
+            throw new UnittestError(actual + ' is not less than ' + expected + `. actual > expected`)
         }
         if (actual === expected) {
-            throw new UnittestError(actual + ' is not less than ' + expected + `. ${actual} === ${expected}`)
+            throw new UnittestError(actual + ' is not less than ' + expected + `. actual === expected`)
         }
     }
 
@@ -269,10 +269,28 @@ class TestCase {
             throw new UnittestError('assertGreater must be called with numbers')
         }
         if (actual < expected) {
-            throw new UnittestError(`actual is not greater than expected. ${actual} < ${expected}`)
+            throw new UnittestError(`${actual} is not greater than ${expected}. actual < expected`)
         }
         if (actual === expected) {
-            throw new UnittestError(`actual is not greater than expected. ${actual} === ${expected}`)
+            throw new UnittestError(`${actual} is not greater than ${expected}. actual === expected`)
+        }
+    }
+
+    assertGreaterEqual(actual, expected) {
+        if (typeof actual !== 'number' || typeof expected !== 'number') {
+            throw new UnittestError('assertGreaterEqual must be called with numbers')
+        }
+        if (actual < expected) {
+            throw new UnittestError(`${actual} is not greater than or equal to ${expected}. actual < expected`)
+        }
+    }
+
+    assertLessEqual(actual, expected) {
+        if (typeof actual !== 'number' || typeof expected !== 'number') {
+            throw new UnittestError('assertLessEqual must be called with numbers')
+        }
+        if (actual > expected) {
+            throw new UnittestError(`${actual} is not less than or equal to ${expected}. actual > expected`)
         }
     }
 }
@@ -351,6 +369,7 @@ ${timingMessage}
     }
 }
 
+
 unittest.errors = {
     UnittestError,
     FailCalledError,
@@ -363,3 +382,10 @@ unittest.errors = {
 }
 
 module.exports = unittest
+
+
+process.on('unhandledRejection', onUnhandledPromiseRejection);
+
+function onUnhandledPromiseRejection(reason, _promise) {
+    console.log(reason)
+}
