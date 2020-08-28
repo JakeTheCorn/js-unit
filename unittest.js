@@ -183,6 +183,24 @@ class TestCase {
         }
     }
 
+    async assertAsyncRaises(klass, func) {
+        let err = null
+        try {
+            await func()
+        } catch (error) {
+            err = error
+        }
+        if (!err) {
+            throw new Error('assertAsyncRaises did not throw')
+        }
+    }
+
+    assertRegex(value, pattern) {
+        if (!pattern.test(value)) {
+            throw new Error(`"${value}" does not match pattern ${pattern}`)
+        }
+    }
+
     assertRaises(errType, throwFunc) {
         let err = null
         try {

@@ -7,8 +7,7 @@ class AssertIsNotNullTests extends unittest.TestCase {
     }
 
     test_fail() {
-        const r = /assertIsNotNull called with null/
-        this.assertRaisesRegex(UnittestError, r, () => {
+        this.assertRaisesRegex(UnittestError, /assertIsNotNull called with null/, () => {
             this.assertIsNotNull(null)
         })
     }
