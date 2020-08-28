@@ -392,17 +392,8 @@ class unittest {
 
         const timingMessage = `Test ran in ${endSecs - startSecs}s ${(endNanoSecs - startNanoSecs) / 1000000}ms`
 
-
         if (failCount === 0) {
-            console.info(`
-${totalRun} tests run
-${successCount} tests pass
-${skipCount} tests skipped
-${failCount} tests fail
-
-${timingMessage}
-            `)
-            return
+            return print_results({ totalRun, successCount, skipCount, failCount, timingMessage })
         }
         const lines = []
         for (const classFailure of classFailures) {
@@ -411,23 +402,24 @@ ${timingMessage}
                 lines.push([line, failure.error])
             }
         }
-        console.info(`
+        print_results({ totalRun, successCount, skipCount, failCount, timingMessage })
+        for (const line of lines) {
+            console.log(line[0] + '\n')
+            console.log(format_stack(line[1]))
+            console.log('\n')
+        }
+    }
+}
+
+function print_results({ totalRun, successCount, skipCount, failCount, timingMessage }) {
+    console.info(`
 ${totalRun} tests run
 ${successCount} tests pass
 ${skipCount} tests skipped
 ${failCount} tests fail
 
 ${timingMessage}
-
-failing tests...
 `)
-        for (const line of lines) {
-            console.log(line[0] + '\n')
-            console.log(format_stack(line[1]))
-            console.log('\n')
-        }
-
-    }
 }
 
 function format_stack(err) {
