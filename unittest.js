@@ -220,9 +220,15 @@ class TestCase {
         throw new Error('Did not raise instance of ' + errType)
     }
 
-    assertRaisesRegex(klass, regex, throwFunc) {
+    assertRaisesRegex(klass, regex, func) {
+        if (typeof func !== 'function') {
+            throw new TypeError('func arg (3rd position) must be niladic function')
+        }
+        if (typeof regex !== 'string' && !(regex instanceof RegExp)) {
+            throw new TypeError('regex arg (2nd position) must be instance of regex or string')
+        }
         try {
-            throwFunc() // validate function type
+            func()
             throw new DidNotRaiseError('assertRaisesRegex fails... function did not throw')
         } catch (error) {
             if (error instanceof DidNotRaiseError) {
@@ -249,12 +255,7 @@ class TestCase {
             throw TypeError('assertRuntimeLimit expects a niladic function for 2nd parameter')
         }
         const start = process.hrtime()
-        try {
-            func()
-        } catch (error) {
-            console.error(error)
-            // do something
-        }
+        func()
         const [_end_secs, end_nano_secs] = process.hrtime(start)
         const ONE_MILLION = 1000000
         const func_ms = end_nano_secs / ONE_MILLION
@@ -410,14 +411,35 @@ ${timingMessage}
                 lines.push([line, failure.error])
             }
         }
-        console.info(timingMessage)
+        console.info(`
+${totalRun} tests run
+${successCount} tests pass
+${skipCount} tests skipped
+${failCount} tests fail
+
+${timingMessage}
+
+failing tests...
+`)
         for (const line of lines) {
-            console.log(line[0])
-            console.log(line[1])
+            console.log(line[0] + '\n')
+            console.log(format_stack(line[1]))
             console.log('\n')
         }
 
     }
+}
+
+function format_stack(err) {
+    const lines = err.stack.split('\n')
+    const res = []
+    for (const line of lines) {
+        if (/^.*\.run \(.*unittest.js:*/.test(line)) {
+            break
+        }
+        res.push(line)
+    }
+    return res.join('\n')
 }
 
 
@@ -429,12 +451,13 @@ unittest.errors = {
     AssertArrayContainsError,
     AssertObjectContainsError,
     AssertTypeofError,
-    AssertArrayEqualsError
+    AssertArrayEqualsError,
 }
 
 module.exports = unittest
 
-
+// todo: print runtime of each test
+// print tests while they run
 process.on('unhandledRejection', onUnhandledPromiseRejection);
 
 function onUnhandledPromiseRejection(reason, _promise) {

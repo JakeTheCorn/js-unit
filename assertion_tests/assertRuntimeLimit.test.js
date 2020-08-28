@@ -1,4 +1,5 @@
 const unittest = require("../unittest")
+const sleep = require('../lib/sleep')
 const { UnittestError } = unittest.errors
 
 
@@ -29,20 +30,17 @@ class AssertRuntimeLimitTests extends unittest.TestCase {
     test_pass() {
         this.assertRuntimeLimit(1000, noop)
     }
+
+    test_it_fails_if_timed_function_throws() {
+        const r = 'ERR!'
+        this.assertRaisesRegex(Error, r, () => {
+            this.assertRuntimeLimit(2000, () => {
+                throw new Error('ERR!')
+            })
+        })
+    }
 }
 
 function noop() {}
-
-// todo: print runtime of each test
-
-// todo: move to utils
-function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-        currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-}
-
 
 unittest.register(AssertRuntimeLimitTests).run_if_main(module)

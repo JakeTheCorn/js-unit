@@ -11,7 +11,7 @@ class AssertRaisesRegexTests extends unittest.TestCase {
 
     test_does_not_raise() {
         this.assertRaisesRegex(Error, /did not throw/g, () => {
-            this.assertRaisesRegex(Err, '^Hello World$', () => {})
+            this.assertRaisesRegex(Err, '^Hello World$', noop)
         })
     }
 
@@ -28,6 +28,22 @@ class AssertRaisesRegexTests extends unittest.TestCase {
             })
         })
     }
+
+    test_it_throws_TypeError_when_func_arg_is_not_function() {
+        this.assertRaises(TypeError, () => {
+            this.assertRaisesRegex(Err, 'bad_pattern', '')
+        })
+    }
+
+    test_it_throws_TypeError_when_regex_arg_is_non_string_or_regex() {
+        this.assertRaisesRegex(TypeError, 'regex or string', () => {
+            this.assertRaisesRegex(Err, null, noop)
+        })
+    }
 }
+
+
+function noop() {}
+
 
 unittest.register(AssertRaisesRegexTests).run_if_main(module)

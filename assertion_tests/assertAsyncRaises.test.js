@@ -12,7 +12,7 @@ class AssertAsyncRaisesTests extends unittest.TestCase {
 
     async test_does_not_raise_failure() {
         try {
-            await this.assertAsyncRaises(Error, async () => {})
+            await this.assertAsyncRaises(Error, noop)
             this.fail('function should have thrown')
         } catch (error) {
             // assertRegex would be helpful here
@@ -20,5 +20,7 @@ class AssertAsyncRaisesTests extends unittest.TestCase {
         }
     }
 }
+
+function noop() {}
 
 unittest.register(AssertAsyncRaisesTests).run_if_main(module)

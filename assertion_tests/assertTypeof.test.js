@@ -1,6 +1,7 @@
 const unittest = require("../unittest")
 const { AssertTypeofError } = unittest.errors
 
+
 class AssertTypeofTests extends unittest.TestCase {
     test_failure() {
         const r = /typeof "hello" !== function/
@@ -13,5 +14,6 @@ class AssertTypeofTests extends unittest.TestCase {
         this.assertTypeof('hello', 'string')
     }
 }
+
 
 unittest.register(AssertTypeofTests).run_if_main(module)

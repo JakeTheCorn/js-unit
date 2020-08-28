@@ -1,5 +1,6 @@
 const unittest = require("../unittest")
 
+
 class IsFalseTests extends unittest.TestCase {
     test_pass() {
         this.assertIsFalse(false)
@@ -11,5 +12,6 @@ class IsFalseTests extends unittest.TestCase {
         })
     }
 }
+
 
 unittest.register(IsFalseTests).run_if_main(module)
