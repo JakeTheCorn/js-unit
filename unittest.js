@@ -204,8 +204,8 @@ class TestCase {
 
     assertRaisesRegex(klass, regex, throwFunc) {
         try {
-            throwFunc()
-            throw new DidNotRaiseError('assertRaisesRegex fails... function did now throw')
+            throwFunc() // validate function type
+            throw new DidNotRaiseError('assertRaisesRegex fails... function did not throw')
         } catch (error) {
             if (error instanceof DidNotRaiseError) {
                 throw new Error(error.message)
@@ -213,13 +213,23 @@ class TestCase {
             if (error.constructor.name !== klass.name) {
                 throw new Error('Did not raise instance of ' + klass.name)
             }
-            if (!regex.test(error.message)) {
-                throw new Error(error.message + ' does not match pattern ' + regex)
+            let r = regex
+            if (typeof regex === 'string') {
+                r = new RegExp(regex)
+            }
+            if (!r.test(error.message)) {
+                throw new Error(`"${error.message}" does not match pattern: ${r}`)
             }
         }
     }
 
     assertRuntimeLimit(ms_limit, func) {
+        if (typeof ms_limit !== 'number') {
+            throw TypeError('assertRuntimeLimit expects a number for 1st parameter')
+        }
+        if (typeof func !== 'function') {
+            throw TypeError('assertRuntimeLimit expects a niladic function for 2nd parameter')
+        }
         const start = process.hrtime()
         try {
             func()
@@ -316,6 +326,7 @@ class TestCase {
         }
     }
 }
+
 
 class unittest {
     static TestCase = TestCase

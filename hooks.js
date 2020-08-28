@@ -3,6 +3,8 @@ const unittest = require('./unittest')
 // listener?
 
 class Hooks extends unittest.Hooks {
+    onStart() {}
+
     onFailure() {
 
     }

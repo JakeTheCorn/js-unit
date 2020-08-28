@@ -6,3 +6,4 @@ single TestCase class
 high performance (cpp future)
 Error report only up to the assertion error but not beneath it
 easily configurable
+no dependencies
