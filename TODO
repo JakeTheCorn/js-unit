@@ -1,5 +1,6 @@
 add globbing so this can be run as `node unittest.js --pattern subdir/**/*.test.js`
 make unittest an npm module
-trim stack trace of Error so that so unittest internals are shown ... making it easier for devs to find bugs in their own code.
 review and remove api
 --failfast option
+run single method
+ONLY behavior

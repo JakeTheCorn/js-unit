@@ -31,11 +31,17 @@ class TestCase {
         let successCount = 0
         let skipCount = 0
         let funcNames = this.__getFuncNames()
+        let onlies = funcNames.filter(v => /^ONLY_test.*$/.test(v))
+        if (onlies.length > 0) {
+            funcNames = onlies
+        }
         let test
         for (let i = 0; i < funcNames.length; i++) {
             test = funcNames[i]
             if (!/^_?test*/.test(test)) {
-                continue
+                if (!/^ONLY_test*/.test(test)) {
+                    continue
+                }
             }
             if (test[0] === '_') {
                 skipCount++

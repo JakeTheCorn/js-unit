@@ -145,6 +145,20 @@ class ObjectEqualTests extends unittest.TestCase {
         this.assertEqual(err, 'unequal values found at "lists.0.1.person.addresses.1.street": "1500 Main" !== "1600 Penn"')
     }
 
+    test_empty_array_versus_object1() {
+        const a = {lists: []}
+        const b = {lists: {}}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'could not compare array with object at "lists"')
+    }
+
+    test_empty_array_versus_object2() {
+        const a = {lists: {}}
+        const b = {lists: []}
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'could not compare object with array at "lists"')
+    }
+
     _test_with_dots_in_path_names() {}
 
     _test_dates() {}
