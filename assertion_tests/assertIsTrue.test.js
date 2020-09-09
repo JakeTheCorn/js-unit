@@ -2,12 +2,12 @@ const unittest = require("../unittest")
 
 class IsTrueTests extends unittest.TestCase {
     test_pass() {
-        this.assertIsTrue(true)
+        this.assertTrue(true)
     }
 
     test_fail() {
         this.assertRaisesRegex(Error, /"HEY" !== true/, () => {
-            this.assertIsTrue('HEY')
+            this.assertTrue('HEY')
         })
     }
 }

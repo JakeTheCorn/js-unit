@@ -3,4 +3,3 @@ make unittest an npm module
 review and remove api
 --failfast option
 run single method
-ONLY behavior

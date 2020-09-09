@@ -23,7 +23,7 @@ class DateTimeTests extends unittest.TestCase {
         const dt2 = new DateTime(d2)
 
         const years_equal = dt.years_equal(dt2)
-        this.assertIsTrue(years_equal)
+        this.assertTrue(years_equal)
     }
 
     test_years_equal_TypeError_thrown() {
@@ -46,7 +46,7 @@ class DateTimeTests extends unittest.TestCase {
         const dt2 = new DateTime(d2)
 
         const years_equal = dt1.years_equal(dt2)
-        this.assertIsFalse(years_equal)
+        this.assertFalse(years_equal)
     }
 }
 

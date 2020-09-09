@@ -30,7 +30,7 @@ class TestCase {
         const failures = []
         let successCount = 0
         let skipCount = 0
-        let funcNames = this.__getFuncNames()
+        let funcNames = this.__getFuncNames(this)
         let onlies = funcNames.filter(v => /^ONLY_test.*$/.test(v))
         if (onlies.length > 0) {
             funcNames = onlies
@@ -74,9 +74,8 @@ class TestCase {
         }
     }
 
-    __getFuncNames() {
-        // use framework to test this function
-        var self = this
+    __getFuncNames(v) {
+        var self = v;
         var props = [];
         var obj = self;
         do {
@@ -175,14 +174,14 @@ class TestCase {
         }
     }
 
-    assertIsTrue(actual) {
+    assertTrue(actual) {
         if (actual !== true) {
             const formatted = typeof actual === 'string' ? `"${actual}"` : actual
             throw new Error(formatted + ' !== true')
         }
     }
 
-    assertIsFalse(actual) {
+    assertFalse(actual) {
         if (actual !== false) {
             const formatted = typeof actual === 'string' ? `"${actual}"` : actual
             throw new Error(formatted + ' !== false')
