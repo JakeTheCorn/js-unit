@@ -24,7 +24,7 @@ class TestCase {
         throw new FailCalledError(reason)
     }
 
-    run() {
+    run({ only_methods, fail_fast } = {}) {
         let testsRunCount = 0
         let failureCount = 0
         const failures = []
@@ -38,6 +38,12 @@ class TestCase {
         let test
         for (let i = 0; i < funcNames.length; i++) {
             test = funcNames[i]
+            if (only_methods.length) {
+                if (only_methods.indexOf(test) === -1) {
+                    continue
+                }
+            }
+
             if (!/^_?test*/.test(test)) {
                 if (!/^ONLY_test*/.test(test)) {
                     continue
@@ -54,6 +60,9 @@ class TestCase {
                 successCount++
                 testsRunCount++
             } catch (error) {
+                if (fail_fast) {
+                    break
+                }
                 failures.push({ test, error })
                 failureCount++
                 testsRunCount++
@@ -355,6 +364,22 @@ class TestCase {
 class unittest {
     static TestCase = TestCase
     static cases = []
+    static _only_classes = []
+    static _only_methods = []
+    static _fail_fast = false
+
+    static set_only_classes(classes = []) {
+        unittest._only_classes = classes
+    }
+
+    static set_only_methods(methods = []) {
+        unittest._only_methods = methods
+    }
+
+    static set_fail_fast(fail_fast) {
+        unittest._fail_fast = fail_fast
+    }
+
     static register(...classes) {
         classes.forEach(cls => {
             const c = new cls()
@@ -380,8 +405,18 @@ class unittest {
         let skipCount = 0
         const classFailures = []
 
+        if (unittest._only_classes.length) {
+            unittest.cases = unittest.cases.filter(c => {
+                const name = c.constructor.name
+                if (unittest._only_classes.indexOf(name) > -1) {
+                    return true
+                }
+                return false
+            })
+        }
+
         for (var i = 0; i < unittest.cases.length; i++) {
-            const report = unittest.cases[i].run()
+            const report = unittest.cases[i].run({ only_methods: unittest._only_methods, fail_fast: unittest._fail_fast })
             totalRun += report.counts.run
             successCount += report.counts.success
             failCount += report.counts.failed

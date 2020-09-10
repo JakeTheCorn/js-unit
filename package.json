@@ -1,0 +1,22 @@
+{
+  "name": "unittest-js",
+  "version": "1.0.0",
+  "description": "js implementation of python unittest module",
+  "main": "unittest.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "node cmd.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JakeTheCorn/js-unit.git"
+  },
+  "author": "jake corn <jakethecorn@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JakeTheCorn/js-unit/issues"
+  },
+  "homepage": "https://github.com/JakeTheCorn/js-unit#readme"
+}

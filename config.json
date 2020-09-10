@@ -1,10 +1,38 @@
 {
-    "path": "./",
-    "patterns": [
-        ".ut.js",
-        ".test.js"
-    ],
     "commands": {
-
+        "default": {
+            "path": "./",
+            "patterns": [
+                ".ut.js",
+                ".test.js"
+            ]
+        },
+        "ut-only": {
+            "path": "./",
+            "patterns": [
+                ".ut.js"
+            ]
+        },
+        "with-class-names": {
+            "path": "./",
+            "patterns": [
+                ".single-class.js"
+            ],
+            "classes": ["SingleClassTests"]
+        },
+        "with-method-names": {
+            "path": "./",
+            "patterns": [
+                ".method-names.js"
+            ],
+            "methods": ["test_this_one", "test_this_one_too"]
+        },
+        "fail-fast": {
+            "path": "./",
+            "patterns": [
+                ".fail-fast.js"
+            ],
+            "fail_fast": true
+        }
     }
 }

@@ -1,10 +1,12 @@
+const unittest = require('./unittest')
 const Utils = require('./lib/utils')
 const utils = new Utils()
 
 
 main(process.argv)
 
-async function main(_args) {
+async function main(args) {
+    const cmd = args[2]
     let data = await utils.readfile('./config.json')
     const lines = data.split('\n')
     data = lines.filter(l => {
@@ -13,14 +15,14 @@ async function main(_args) {
         }
         return true
     }).join('')
-    const config = JSON.parse(data)
+    const config = JSON.parse(data)['commands'][cmd]
     if (!/\/$/.test(config.path)) {
         config.path = config.path + '/'
     }
     await all(config)
 }
 
-async function all({ path, patterns }) {
+async function all({ path, patterns, classes, methods, fail_fast }) {
     const testFiles = await getTestFilesNames({
         path,
         patterns
@@ -28,7 +30,11 @@ async function all({ path, patterns }) {
     for (const testFile of testFiles) {
         require(testFile)
     }
-    require('./unittest').main()
+
+    unittest.set_only_classes(classes)
+    unittest.set_only_methods(methods)
+    unittest.set_fail_fast(fail_fast)
+    unittest.main()
 }
 
 

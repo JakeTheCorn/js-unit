@@ -2,4 +2,5 @@ add globbing so this can be run as `node unittest.js --pattern subdir/**/*.test.
 make unittest an npm module
 review and remove api
 --failfast option
-run single method
+run single method, class
+use commands in config file for existing feedback on how running works
