@@ -4,3 +4,5 @@ review and remove api
 --failfast option
 run single method, class
 use commands in config file for existing feedback on how running works
+use statement expression like python for when tests fail
+ONLY

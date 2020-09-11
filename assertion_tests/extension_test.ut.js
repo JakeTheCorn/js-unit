@@ -1,9 +1,9 @@
 const unittest = require('../unittest')
 
-class SubdirTests extends unittest.TestCase {
+class SubDirTests extends unittest.TestCase {
     test() {
         this.assertEqual(7, 7)
     }
 }
 
-unittest.register(SubdirTests).run_if_main(module)
+unittest.register(SubDirTests).run_if_main(module)
