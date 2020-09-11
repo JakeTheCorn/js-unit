@@ -3,21 +3,21 @@ const unittest = require('./unittest')
 // listener?
 
 class Hooks extends unittest.Hooks {
-    onStart() {}
-
-    onFailure() {
-
+    onStart() {
+        // console.log('on start hook...')
     }
 
-    onFunctionTimeout() {
-
+    onFailure() {
+        // console.log('on failure')
     }
 
     onComplete() {
-
+        // console.log('on complete')
     }
 
-    onAllPassed() {}
+    onAllPassed() {
+        // console.log('on all passed')
+    }
 }
 
 

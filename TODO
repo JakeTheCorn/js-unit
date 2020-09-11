@@ -4,3 +4,4 @@ review and remove api
 --failfast option
 run single method, class
 use commands in config file for existing feedback on how running works
+statement expression strings in test functions
