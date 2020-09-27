@@ -24,7 +24,7 @@ class TestCase {
         throw new FailCalledError(reason)
     }
 
-    run({ only_methods, fail_fast } = {}) {
+    run({ only_methods, fail_fast, hooks } = {}) {
         let testsRunCount = 0
         let failureCount = 0
         const failures = []
@@ -64,6 +64,7 @@ class TestCase {
                     break
                 }
                 failures.push({ test, error })
+                hooks.onFailure()
                 failureCount++
                 testsRunCount++
             }
@@ -360,13 +361,24 @@ class TestCase {
     }
 }
 
+class Hooks {
+    onStart() {
+        // abstract
+    }
+
+    onFailure() {
+        // abstract
+    }
+}
 
 class unittest {
     static TestCase = TestCase
+    static Hooks = Hooks
     static cases = []
     static _only_classes = []
     static _only_methods = []
     static _fail_fast = false
+    static _hooks = new Hooks()
 
     static set_only_classes(classes = []) {
         unittest._only_classes = classes
@@ -378,6 +390,10 @@ class unittest {
 
     static set_fail_fast(fail_fast) {
         unittest._fail_fast = fail_fast
+    }
+
+    static set_hooks_instance(hooks) {
+        unittest._hooks = hooks
     }
 
     static register(...classes) {
@@ -416,7 +432,7 @@ class unittest {
         }
 
         for (var i = 0; i < unittest.cases.length; i++) {
-            const report = unittest.cases[i].run({ only_methods: unittest._only_methods, fail_fast: unittest._fail_fast })
+            const report = unittest.cases[i].run({ only_methods: unittest._only_methods, fail_fast: unittest._fail_fast, hooks: unittest._hooks })
             totalRun += report.counts.run
             successCount += report.counts.success
             failCount += report.counts.failed
@@ -433,21 +449,24 @@ class unittest {
         const timingMessage = `Test ran in ${endSecs - startSecs}s ${(endNanoSecs - startNanoSecs) / 1000000}ms`
 
         if (failCount === 0) {
-            return print_results({ totalRun, successCount, skipCount, failCount, timingMessage })
-        }
-        const lines = []
-        for (const classFailure of classFailures) {
-            for (const failure of classFailure.failures) {
-                let line = classFailure.className + '.' + failure.test
-                lines.push([line, failure.error])
+            print_results({ totalRun, successCount, skipCount, failCount, timingMessage })
+            unittest._hooks.onAllPassed()
+        } else {
+            const lines = []
+            for (const classFailure of classFailures) {
+                for (const failure of classFailure.failures) {
+                    let line = classFailure.className + '.' + failure.test
+                    lines.push([line, failure.error])
+                }
+            }
+            print_results({ totalRun, successCount, skipCount, failCount, timingMessage })
+            for (const line of lines) {
+                console.log(line[0] + '\n')
+                console.log(format_stack(line[1]))
+                console.log('\n')
             }
         }
-        print_results({ totalRun, successCount, skipCount, failCount, timingMessage })
-        for (const line of lines) {
-            console.log(line[0] + '\n')
-            console.log(format_stack(line[1]))
-            console.log('\n')
-        }
+        unittest._hooks.onComplete()
     }
 }
 

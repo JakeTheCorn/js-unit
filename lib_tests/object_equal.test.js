@@ -159,6 +159,26 @@ class ObjectEqualTests extends unittest.TestCase {
         this.assertEqual(err, 'could not compare object with array at "lists"')
     }
 
+    ONLY_test_things_that_implement_equals() {
+        class EqualsImplementer {
+            equals(other) {
+                return false
+            }
+
+            toString() {
+                return 'yo'
+            }
+        }
+
+        const imp1 = new EqualsImplementer()
+        const imp2 = new EqualsImplementer()
+        const a = { imp: imp1 }
+        const b = { imp: imp2 }
+
+        const err = object_equal(a, b)
+        this.assertEqual(err, 'unequal values found at "imp": yo !== yo')
+    }
+
     _test_with_dots_in_path_names() {}
 
     _test_dates() {}
