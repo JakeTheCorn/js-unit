@@ -22,10 +22,7 @@ async function main(args) {
     await all(config)
 }
 
-async function all({ path, patterns, classes, methods, fail_fast, hooks_file }) {
-    const Hooks = require('./' + hooks_file)
-    const hooks = new Hooks()
-    hooks.onStart()
+async function all({ path, patterns, classes, methods, fail_fast }) {
     const testFiles = await getTestFilesNames({
         path,
         patterns
@@ -37,7 +34,6 @@ async function all({ path, patterns, classes, methods, fail_fast, hooks_file }) 
     unittest.set_only_classes(classes)
     unittest.set_only_methods(methods)
     unittest.set_fail_fast(fail_fast)
-    unittest.set_hooks_instance(hooks)
     unittest.main()
 }
 

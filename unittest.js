@@ -361,24 +361,12 @@ class TestCase {
     }
 }
 
-class Hooks {
-    onStart() {
-        // abstract
-    }
-
-    onFailure() {
-        // abstract
-    }
-}
-
 class unittest {
     static TestCase = TestCase
-    static Hooks = Hooks
     static cases = []
     static _only_classes = []
     static _only_methods = []
     static _fail_fast = false
-    static _hooks = new Hooks()
 
     static set_only_classes(classes = []) {
         unittest._only_classes = classes
@@ -390,10 +378,6 @@ class unittest {
 
     static set_fail_fast(fail_fast) {
         unittest._fail_fast = fail_fast
-    }
-
-    static set_hooks_instance(hooks) {
-        unittest._hooks = hooks
     }
 
     static register(...classes) {
@@ -450,7 +434,6 @@ class unittest {
 
         if (failCount === 0) {
             print_results({ totalRun, successCount, skipCount, failCount, timingMessage })
-            unittest._hooks.onAllPassed()
         } else {
             const lines = []
             for (const classFailure of classFailures) {
@@ -466,7 +449,6 @@ class unittest {
                 console.log('\n')
             }
         }
-        unittest._hooks.onComplete()
     }
 }
 
