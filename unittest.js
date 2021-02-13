@@ -24,7 +24,7 @@ class TestCase {
         throw new FailCalledError(reason)
     }
 
-    run({ only_methods, fail_fast, hooks } = {}) {
+    run({ only_methods, fail_fast } = {}) {
         let testsRunCount = 0
         let failureCount = 0
         const failures = []
@@ -64,7 +64,6 @@ class TestCase {
                     break
                 }
                 failures.push({ test, error })
-                hooks.onFailure()
                 failureCount++
                 testsRunCount++
             }

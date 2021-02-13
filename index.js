@@ -2,29 +2,63 @@ const unittest = require('./unittest')
 const Utils = require('./lib/utils')
 const utils = new Utils()
 
+module.exports = unittest
 
 main(process.argv)
 
 async function main(args) {
     const cmd = args[2]
-    let data = await utils.readfile('./config.json')
+    if (cmd === undefined) {
+        console.error('Command name missing, exiting...')
+        return process.exit(1)
+    }
+    let data = null
+    try {
+        data = await utils.readfile('./config.json')
+    } catch (error) {
+        console.error(
+`
+Error trying to read configuration file.
+  make sure that a config.json exists in the root directory
+`)
+        return process.exit(1)
+    }
     const lines = data.split('\n')
-    data = lines.filter(l => {
-        if (/^.*\/\//.test(l)) {
-            return false
-        }
-        return true
-    }).join('')
-    const config = JSON.parse(data)['commands'][cmd]
+    // remove json comments
+    data = lines.filter(l => !/^.*\/\//.test(l)).join('')
+    let parsed = null
+    try {
+        parsed = JSON.parse(data)
+    } catch (error) {
+        console.error(error)
+        console.error('\n\nError trying to parse config.json file')
+        return process.exit(1)
+    }
+
+    const commands = parsed['commands']
+    if (commands === undefined) {
+        console.error('Config file must specify a "commands" object.')
+        return process.exit(1)
+    }
+    const config = commands[cmd]
+    if (config === undefined) {
+        console.error(`Could not find configuration for command "${cmd}".`)
+        return process.exit(1)
+    }
     if (!/\/$/.test(config.path)) {
         config.path = config.path + '/'
+    }
+    if (config.patterns === undefined) {
+        console.error('Configuration object missing array of patterns.')
+        return process.exit(1)
     }
     await all(config)
 }
 
 async function all({ path, patterns, classes, methods, fail_fast }) {
+    const p = require('path')
     const testFiles = await getTestFilesNames({
-        path,
+        path: p.join(process.cwd(), path),
         patterns
     })
     for (const testFile of testFiles) {

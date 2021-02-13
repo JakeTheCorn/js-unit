@@ -1,8 +1,8 @@
 {
   "name": "unittest-js",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "js implementation of python unittest module",
-  "main": "unittest.js",
+  "main": "index.js",
   "directories": {
     "lib": "lib"
   },
